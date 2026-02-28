@@ -15,7 +15,7 @@ export default function useUser() {
         localUser = {
           name: 'Sahabat',
           avatar: null,
-          location: 'Bandung',
+          location: 'Jakarta',
           createdAt: new Date().toISOString(),
         };
         await localforage.setItem('user_profile', localUser);
