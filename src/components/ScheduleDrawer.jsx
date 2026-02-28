@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
+import localforage from 'localforage';
 
 import useUser from '@/hooks/useUser';
 import { StorageService } from '@/lib/storageService';
@@ -104,16 +105,20 @@ export default function ScheduleDrawer({ isOpen, onClose, onUpdate }) {
       const res = await fetch(`/api/schedule?city=${encodeURIComponent(city)}`);
       const data = await res.json();
       const now = dayjs();
-
+      
+      //jika ramadhan sudah lewat, maka aktifkan lagi ini dan hapus  const todayData = data?.schedule?.[0];
       const todayData = data?.schedule?.find((item) =>
         dayjs(item.isoDate).isSame(now, 'day'),
       );
+
       if (todayData) setTodaySchedule(todayData.timings);
 
       const futureData =
         data?.schedule
           ?.filter((item) => dayjs(item.isoDate).isAfter(now, 'day'))
           .slice(0, 30) || [];
+
+      // const futureData = data?.schedule?.slice(1, 31) || [];
 
       setUpcomingSchedules(futureData);
     } catch (error) {
@@ -132,23 +137,21 @@ export default function ScheduleDrawer({ isOpen, onClose, onUpdate }) {
    */
   const handleCitySelect = async (city) => {
     setIsSaving(true);
+    setIsPickerOpen(false);
     setSelectedCity(city);
-    fetchSchedule(city);
 
     try {
       const currentUser = (await localforage.getItem('user_profile')) || {};
       const updatedUser = { ...currentUser, location: city };
       await localforage.setItem('user_profile', updatedUser);
 
+      // 🔥 Trigger global update
       window.dispatchEvent(new Event('user_profile_updated'));
 
       if (onUpdate) onUpdate();
-      setTimeout(() => {
-        setIsPickerOpen(false);
-        setIsSaving(false);
-      }, 300);
     } catch (error) {
       console.error('Gagal update lokasi:', error);
+    } finally {
       setIsSaving(false);
     }
   };

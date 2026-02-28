@@ -5,6 +5,19 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 // Plugin ini wajib agar bisa membaca format tanggal DD-MM-YYYY dari API Aladhan
 dayjs.extend(customParseFormat);
 
+// 🔥 TAMBAHKAN INI
+const TIME_OFFSET = 3;
+
+// Fungsi untuk menambahkan offset waktu (misal: +3 menit) pada setiap jadwal sholat
+// hapus fungsi ini dan offset jika ramadhan sudah lewat
+// karena selisih waktu antara API Aladhan dengan waktu lokal bisa berbeda (biasanya 2-3 menit)
+
+const addOffset = (timeStr, minutes = TIME_OFFSET) => {
+  return dayjs(timeStr, 'HH:mm')
+    .add(minutes, 'minute')
+    .format('HH:mm');
+};
+
 /**
  * GET Handler untuk mengambil jadwal sholat dari API Aladhan
  * @param {Request} request
@@ -27,10 +40,10 @@ export async function GET(request) {
 
     // Fetch Data Bulan Februari & Maret 2026
     const res1 = await fetch(
-      `http://api.aladhan.com/v1/calendarByCity/${currentYear}/${month1}?city=${city}&country=${country}&method=20`,
+      `http://api.aladhan.com/v1/calendarByCity/${currentYear}/${month1}?city=${city}&country=${country}&method=11`,
     );
     const res2 = await fetch(
-      `http://api.aladhan.com/v1/calendarByCity/${currentYear}/${month2}?city=${city}&country=${country}&method=20`,
+      `http://api.aladhan.com/v1/calendarByCity/${currentYear}/${month2}?city=${city}&country=${country}&method=11`,
     );
 
     if (!res1.ok || !res2.ok) {
@@ -59,14 +72,14 @@ export async function GET(request) {
           date: item.date.readable,
           isoDate: itemDate.toISOString(),
           hijri: `${item.date.hijri.day} ${item.date.hijri.month.en} ${item.date.hijri.year}`,
+          //jika ramadhan sudah lewat, maka aktifkan lagi ini dan hapus addOffset pada setiap item.timings , 3),
           timings: {
-            // FIX: Gunakan split(' ')[0] untuk membersihkan zona waktu (WIB/WITA/WIT/+08)
-            Imsak: item.timings.Imsak.split(' ')[0],
-            Subuh: item.timings.Fajr.split(' ')[0],
-            Dzuhur: item.timings.Dhuhr.split(' ')[0],
-            Ashar: item.timings.Asr.split(' ')[0],
-            Maghrib: item.timings.Maghrib.split(' ')[0],
-            Isya: item.timings.Isha.split(' ')[0],
+            Imsak: addOffset(item.timings.Imsak.split(' ')[0], 3),
+            Subuh: addOffset(item.timings.Fajr.split(' ')[0], 3),
+            Dzuhur: addOffset(item.timings.Dhuhr.split(' ')[0], 3),
+            Ashar: addOffset(item.timings.Asr.split(' ')[0], 3),
+            Maghrib: addOffset(item.timings.Maghrib.split(' ')[0], 3),
+            Isya: addOffset(item.timings.Isha.split(' ')[0], 3),
           },
         });
         count++;
