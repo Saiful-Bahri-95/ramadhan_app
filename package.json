@@ -1,0 +1,30 @@
+{
+  "name": "my-ramadhan-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
+    "@yudiel/react-qr-scanner": "^2.5.1",
+    "dayjs": "^1.11.19",
+    "framer-motion": "^12.34.3",
+    "localforage": "^1.10.0",
+    "lucide-react": "^0.575.0",
+    "next": "16.1.6",
+    "peerjs": "^1.5.5",
+    "qrcode.react": "^4.2.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4"
+  }
+}
