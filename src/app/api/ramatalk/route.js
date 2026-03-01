@@ -1,9 +1,43 @@
 import { NextResponse } from 'next/server';
 
+// ─── Call Groq API ──────────────────────────────────────────────────────────
+async function callGroq(requestBody) {
+  try {
+    return await fetch(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+  } catch (err) {
+    console.log("Retrying Groq...");
+    
+    // retry 1x
+    return await fetch(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+  }
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { message, context } = body;
+    const { message, context, chatHistory = [] } = body;
+
+    const trimmedHistory = chatHistory.slice(-6); // Ambil maksimal 6 pesan terakhir untuk konteks
 
     if (!message) {
       return NextResponse.json(
@@ -184,30 +218,17 @@ ATURAN FORMAT BERSAMA (BERLAKU DI SEMUA MODE):
 - Selalu ingat: kamu berbicara dengan Muslim Indonesia yang sedang menjalani Ramadhan. Jaga kehangatan di setiap respons.`;
 
     // ─── Call Groq API ──────────────────────────────────────────────────────────
-    const response = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt },
-              ...chatHistory,
-            { role: 'user', content: message },
-          ],
-          temperature:
-            mode === 'ngobrol' ? 0.8 :
-            mode === 'fiqih' ? 0.3 :
-            mode === 'hadits' ? 0.2 : 0.4,
-          max_tokens: mode === 'ngobrol' ? 500 : 1024,
-          // top_p: 0.9, jika temperature terlalu tinggi, bisa aktifkan top_p untuk menjaga fokus jawaban
-        }),
-      },
-    );
+    const response = await callGroq({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...trimmedHistory,
+        { role: 'user', content: message },
+      ],
+      temperature: mode === 'ngobrol' ? 0.75 : 0.4,
+      max_tokens: 700,
+      top_p: 0.9,
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
