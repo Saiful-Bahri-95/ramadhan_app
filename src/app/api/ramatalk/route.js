@@ -227,7 +227,7 @@ ATURAN FORMAT BERSAMA (BERLAKU DI SEMUA MODE):
       ],
       temperature: mode === 'ngobrol' ? 0.75 : 0.4,
       max_tokens: 700,
-      top_p: 0.9,
+      //top_p: 0.9,
     });
 
     if (!response.ok) {
