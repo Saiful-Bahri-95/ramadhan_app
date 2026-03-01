@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, Moon } from 'lucide-react';
+import { CalendarDays, Moon, Sun, Sunrise, Sunset, CloudSun } from 'lucide-react';
 
 /**
  * HeroCard — kartu hero utama yang menampilkan countdown berbuka,
@@ -12,6 +12,35 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
     return (
       <div className='min-h-[300px] rounded-[2.5rem] bg-slate-200 dark:bg-slate-800 animate-pulse' />
     );
+  }
+
+  let BackgroundIcon = Moon; // default
+
+  switch (hero.mode) {
+    case 'puasa-dimulai':
+      BackgroundIcon = Sunrise;
+      break;
+
+    case 'dzuhur':
+      BackgroundIcon = Sun;
+      break;
+
+    case 'ashar':
+      BackgroundIcon = CloudSun;
+      break;
+
+    case 'buka':
+      BackgroundIcon = Sunset;
+      break;
+
+    case 'berbuka':
+    case 'tarawih':
+    case 'tahajud':
+      BackgroundIcon = Moon;
+      break;
+
+    default:
+      BackgroundIcon = Moon;
   }
 
   return (
@@ -39,7 +68,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
         >
           <CalendarDays
             size={18}
-            className='text-white/90 cursor-pointer md:w-5 md:h-5'
+            className={`${hero.accent} cursor-pointer md:w-5 md:h-5`}
           />
         </button>
       </div>
@@ -53,7 +82,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
         </p>
 
         {hero.timeLeft ? (
-          <h2 className='text-[4rem] md:text-[4.5rem] lg:text-[5.5rem] font-black tracking-[-0.05em] tabular-nums bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-none'>
+          <h2 className={`text-[4rem] md:text-[4.5rem] lg:text-[5.5rem] font-black tracking-[-0.05em] tabular-nums ${hero.accent} drop-shadow-xl leading-none`}>
             {hero.timeLeft}
           </h2>
         ) : (
@@ -88,9 +117,9 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       )}
 
       {/* Dekoratif moon icon */}
-      <Moon
+      <BackgroundIcon
         size={214}
-        className='absolute -bottom-14 -right-14 text-white/10 rotate-12 pointer-events-none'
+        className='absolute -bottom-2 -right-2 text-white/10 rotate-12 pointer-events-none duration-700 group-hover:rotate-0'
       />
     </div>
   );

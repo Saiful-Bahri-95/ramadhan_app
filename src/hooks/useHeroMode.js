@@ -34,12 +34,17 @@ const useHeroMode = (prayerTimes, currentTime) => {
   };
 
   const subuh = parseTime(prayerTimes.Subuh);
+  const dzuhur = parseTime(prayerTimes.Dzuhur);
+  const ashar = parseTime(prayerTimes.Ashar);
   const maghrib = parseTime(prayerTimes.Maghrib);
   const isya = parseTime(prayerTimes.Isya);
   const isyaEnd = isya.add(10, 'minute');
   const subuhPlus5 = subuh.add(5, 'minute');
   const now = currentTime;
   const nowH = now.hour();
+
+  let startPhase;
+  let endPhase;
 
   if (now.isAfter(maghrib) && now.isBefore(isyaEnd)) {
     return {
@@ -48,7 +53,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       sublabel: 'Alhamdulillah, puasamu hari ini selesai',
       gradient: 'from-orange-500 via-rose-500 to-pink-600',
       shadow: '0 25px 60px -15px rgba(244,63,94,0.5)',
-      accent: 'text-rose-200',
+      accent: 'text-rose-200 drop-shadow-lg',
       countdownLabel: null,
       timeLeft: null,
       progress: null,
@@ -64,7 +69,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       sublabel: 'Semangat sholat tarawih malam ini 🤍',
       gradient: 'from-violet-600 via-purple-600 to-fuchsia-700',
       shadow: '0 25px 60px -15px rgba(147,51,234,0.5)',
-      accent: 'text-purple-200',
+      accent: 'text-purple-200 drop-shadow-lg',
       countdownLabel: 'Waktu Tarawih',
       timeLeft: null,
       progress: null,
@@ -78,7 +83,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       sublabel: 'Sepertiga malam, waktu terbaik bermunajat',
       gradient: 'from-slate-700 via-slate-800 to-slate-900',
       shadow: '0 25px 60px -15px rgba(15,23,42,0.6)',
-      accent: 'text-slate-300',
+      accent: 'text-slate-300 drop-shadow-lg',
       countdownLabel: 'Waktu Tahajud',
       timeLeft: null,
       progress: null,
@@ -92,17 +97,61 @@ const useHeroMode = (prayerTimes, currentTime) => {
       sublabel: `Subuh pukul ${subuh.format('HH:mm')} — niat puasa dulu!`,
       gradient: 'from-amber-500 via-orange-500 to-red-500',
       shadow: '0 25px 60px -15px rgba(249,115,22,0.5)',
-      accent: 'text-amber-100',
+      accent: 'text-amber-100 drop-shadow-lg',
       countdownLabel: 'Puasa dimulai dalam',
       timeLeft: now.isBefore(subuh) ? formatDur(subuh.diff(now)) : null,
       progress: null,
     };
   }
 
+  if (now.isBefore(dzuhur)) {
+
+    startPhase = subuh;
+    endPhase = dzuhur;
+    
+    return {
+      mode: 'dzuhur',
+      label: 'Waktu Dzuhur 🌞',
+      sublabel: `Dzuhur pukul ${dzuhur.format('HH:mm')}`,
+      gradient: 'from-amber-400 via-orange-400 to-red-500',
+      shadow: '0 25px 60px -15px rgba(249,115,22,0.5)',
+      accent: 'text-slate-900 drop-shadow-lg',
+      countdownLabel: 'Menuju Waktu Dzuhur',
+      timeLeft: formatDur(dzuhur.diff(now)),
+      progress: {
+        value: now.isBefore(subuh) ? 0 : Math.min((now.diff(subuh) / dzuhur.diff(subuh)) * 100, 100),
+        startLabel: `Subuh ${prayerTimes.Subuh}`,
+        endLabel: `Dzuhur ${prayerTimes.Dzuhur}`,
+      },
+    };
+  }
+
+  if (now.isBefore(ashar)) {
+
+    startPhase = dzuhur;
+    endPhase = ashar;
+    
+    return {
+      mode: 'ashar',
+      label: 'Waktu Ashar 🌤️',
+      sublabel: `Ashar pukul ${ashar.format('HH:mm')}`,
+      gradient: 'from-amber-300 via-yellow-300 to-orange-400',
+      shadow: '0 25px 60px -15px rgba(248, 232, 91, 0.5)',
+      accent: 'text-slate-900 drop-shadow-lg',
+      countdownLabel: 'Menuju Waktu Ashar',
+      timeLeft: formatDur(ashar.diff(now)),
+      progress: {
+        value: now.isBefore(dzuhur) ? 0 : Math.min((now.diff(dzuhur) / ashar.diff(dzuhur)) * 100, 100),
+        startLabel: `Dzuhur ${prayerTimes.Dzuhur}`,
+        endLabel: `Ashar ${prayerTimes.Ashar}`,
+      },
+    };
+  }
+
   // Default: countdown menuju berbuka (siang hari)
   const diff = maghrib.diff(now);
-  const totalDur = maghrib.diff(subuh);
-  const passed = now.diff(subuh);
+  const totalDur = maghrib.diff(ashar);
+  const passed = now.diff(ashar);
 
   return {
     mode: 'buka',
@@ -110,12 +159,12 @@ const useHeroMode = (prayerTimes, currentTime) => {
     sublabel: `Maghrib pukul ${maghrib.format('HH:mm')}`,
     gradient: 'from-[#1e3a8a] via-[#312e81] to-[#4c1d95]',
     shadow: '0 25px 60px -15px rgba(79,70,229,0.5)',
-    accent: 'text-indigo-200',
+    accent: 'text-indigo-200 drop-shadow-lg',
     countdownLabel: 'Menuju Berbuka',
     timeLeft: formatDur(diff),
     progress: {
       value: passed > 0 ? Math.min((passed / totalDur) * 100, 100) : 0,
-      startLabel: `Subuh ${prayerTimes.Subuh}`,
+      startLabel: `Ashar ${prayerTimes.Ashar}`,
       endLabel: `Maghrib ${prayerTimes.Maghrib}`,
     },
   };
