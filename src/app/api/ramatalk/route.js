@@ -196,11 +196,15 @@ ATURAN FORMAT BERSAMA (BERLAKU DI SEMUA MODE):
           model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: systemPrompt },
+              ...chatHistory,
             { role: 'user', content: message },
           ],
-          temperature: mode === 'ngobrol' ? 0.75 : 0.4,
-          max_tokens: 1024,
-          top_p: 0.9,
+          temperature:
+            mode === 'ngobrol' ? 0.8 :
+            mode === 'fiqih' ? 0.3 :
+            mode === 'hadits' ? 0.2 : 0.4,
+          max_tokens: mode === 'ngobrol' ? 500 : 1024,
+          // top_p: 0.9, jika temperature terlalu tinggi, bisa aktifkan top_p untuk menjaga fokus jawaban
         }),
       },
     );
