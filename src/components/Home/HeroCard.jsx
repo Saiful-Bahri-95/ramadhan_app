@@ -119,7 +119,17 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       {/* Dekoratif moon icon */}
       <BackgroundIcon
         size={214}
-        className='absolute -bottom-2 -right-2 text-white/10 rotate-12 pointer-events-none duration-700 group-hover:rotate-0'
+        className={`
+          absolute -right-14 pointer-events-none 
+          transition-all duration-[4000ms] ease-in-out
+          ${
+            hero.mode === 'dzuhur' || hero.mode === 'ashar'
+              ? 'animate-spin [animation-duration:20s] text-slate-900/10 -bottom-14'
+              : hero.mode === 'tahajud' || hero.mode === 'tarawih'
+              ? '-bottom-4 text-white/20'
+              : '-bottom-14 text-white/10'
+          }
+        `}
       />
     </div>
   );
