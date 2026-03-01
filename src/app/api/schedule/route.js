@@ -80,6 +80,8 @@ export async function GET(request) {
             Ashar: addOffset(item.timings.Asr.split(' ')[0], 3),
             Maghrib: addOffset(item.timings.Maghrib.split(' ')[0], 3),
             Isya: addOffset(item.timings.Isha.split(' ')[0], 3),
+            Firstthird: addOffset(item.timings.Firstthird.split(' ')[0], 3),
+            Lastthird: addOffset(item.timings.Lastthird.split(' ')[0], 3),
           },
         });
         count++;
