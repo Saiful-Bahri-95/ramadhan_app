@@ -1,6 +1,12 @@
 'use client';
 
-import { CalendarDays, Moon, Sun, Sunrise, Sunset, CloudSun } from 'lucide-react';
+// import { CalendarDays, Moon, Sun, Sunrise, Sunset, CloudSun } from 'lucide-react';
+
+import { WiSunrise, WiDayCloudy } from 'react-icons/wi';
+import { MdSunny } from 'react-icons/md';
+import { FaCloudMoon } from "react-icons/fa";
+import { TbSunset2 } from "react-icons/tb";
+import { LuCalendarDays } from "react-icons/lu";
 
 /**
  * HeroCard — kartu hero utama yang menampilkan countdown berbuka,
@@ -14,33 +20,23 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
     );
   }
 
-  let BackgroundIcon = Moon; // default
+  let BackgroundIcon = FaCloudMoon;
 
   switch (hero.mode) {
     case 'puasa-dimulai':
-      BackgroundIcon = Sunrise;
+      BackgroundIcon = WiSunrise;
       break;
-
     case 'dzuhur':
-      BackgroundIcon = Sun;
+      BackgroundIcon = MdSunny;
       break;
-
     case 'ashar':
-      BackgroundIcon = CloudSun;
+      BackgroundIcon = WiDayCloudy;
       break;
-
     case 'buka':
-      BackgroundIcon = Sunset;
+      BackgroundIcon = TbSunset2;
       break;
-
-    case 'berbuka':
-    case 'tarawih':
-    case 'tahajud':
-      BackgroundIcon = Moon;
-      break;
-
     default:
-      BackgroundIcon = Moon;
+      BackgroundIcon = FaCloudMoon;
   }
 
   return (
@@ -66,7 +62,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
           onClick={onOpenSchedule}
           className='p-2 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm'
         >
-          <CalendarDays
+          <LuCalendarDays
             size={18}
             className={`${hero.accent} cursor-pointer md:w-5 md:h-5`}
           />
@@ -76,7 +72,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       {/* Konten tengah: label & countdown */}
       <div className='relative z-10 text-center mt-8 md:mt-10 lg:mt-12'>
         <p
-          className={`text-[10px] md:text-xs lg:text-xs uppercase tracking-[0.3em] ${hero.accent} mb-2`}
+          className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-2`}
         >
           {hero.countdownLabel || hero.label}
         </p>
@@ -86,7 +82,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
             {hero.timeLeft}
           </h2>
         ) : (
-          <h2 className='text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight mt-4'>
+          <h2 className='text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black  bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight mt-4'>
             {hero.label}
           </h2>
         )}
@@ -102,7 +98,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       {hero.progress && (
         <div className='relative z-10 mt-10 md:mt-12 lg:mt-14 max-w-2xl mx-auto'>
           <div
-            className={`flex justify-between text-[9px] md:text-[10px] lg:text-[10px] uppercase tracking-widest ${hero.accent} opacity-70 mb-2`}
+            className={`flex justify-between text-[9px] md:text-[10px] lg:text-[10px] uppercase tracking-widest ${hero.accent} opacity-100 mb-2`}
           >
             <span>{hero.progress.startLabel}</span>
             <span>{hero.progress.endLabel}</span>
@@ -120,14 +116,16 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       <BackgroundIcon
         size={214}
         className={`
-          absolute -right-14 pointer-events-none 
+          absolute pointer-events-none
           transition-all duration-[4000ms] ease-in-out
           ${
-            hero.mode === 'dzuhur' || hero.mode === 'ashar'
-              ? 'animate-spin [animation-duration:20s] text-slate-900/10 -bottom-14'
+            hero.mode === 'dzuhur'
+              ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-slate-900/10'
+              : hero.mode === 'ashar'
+              ? 'top-1/2 -translate-y-1/2 -right-14 scale-110 opacity-90 text-slate-900/10'
               : hero.mode === 'tahajud' || hero.mode === 'tarawih'
-              ? '-bottom-4 text-white/20'
-              : '-bottom-14 text-white/10'
+              ? '-bottom-4 -right-14 text-white/20'
+              : '-bottom-14 -right-14 text-white/10'
           }
         `}
       />
