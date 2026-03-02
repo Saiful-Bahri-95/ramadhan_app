@@ -44,6 +44,7 @@ export const CITIES = [
   'Tangerang',
   'Tanjungpinang',
   'Tarakan',
+  'Tegal',
   'Ternate',
   'Yogyakarta',
 ];
