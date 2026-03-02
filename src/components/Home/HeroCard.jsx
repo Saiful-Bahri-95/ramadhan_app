@@ -60,7 +60,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
         </div>
         <button
           onClick={onOpenSchedule}
-          className='p-2 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm'
+          className='p-2 hover:bg-white/20 rounded-full border border-white/20 transition-colors backdrop-blur-md'
         >
           <LuCalendarDays
             size={18}
