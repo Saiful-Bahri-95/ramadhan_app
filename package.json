@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build --webpack",
-    "start": "next start",
+    "start": "next start ",
     "lint": "eslint"
   },
   "dependencies": {
@@ -13,8 +13,12 @@
     "@yudiel/react-qr-scanner": "^2.5.1",
     "dayjs": "^1.11.19",
     "framer-motion": "^12.34.3",
+    "hijri-date": "^0.2.2",
     "localforage": "^1.10.0",
     "lucide-react": "^0.575.0",
+    "moment": "^2.30.1",
+    "moment-hijri": "^3.0.0",
+    "moment-timezone": "^0.6.0",
     "next": "16.1.6",
     "next-pwa": "^5.6.0",
     "peerjs": "^1.5.5",
