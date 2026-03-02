@@ -124,8 +124,12 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
               : hero.mode === 'ashar'
               ? 'top-1/2 -translate-y-1/2 -right-14 scale-110 opacity-90 text-slate-900/10'
               : hero.mode === 'tahajud' || hero.mode === 'tarawih'
-              ? '-bottom-4 -right-14 text-white/20'
-              : '-bottom-14 -right-14 text-white/10'
+              ? 'top-1 left-1 text-white/20 scale-80'
+              : hero.mode === 'subuh-dimulai'
+              ? 'top-1/2 -translate-y-1/2 -right-14 text-white/20 scale-80'
+              : hero.mode === 'puasa-dimulai'
+              ? 'bottom-1 left-1 text-white/20 scale-80'
+              : '-bottom-14 -right-14 text-white/20 scale-80'
           }
         `}
       />

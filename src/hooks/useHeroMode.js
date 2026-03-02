@@ -2,6 +2,7 @@
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { Sun, Sunrise } from 'lucide-react';
 
 dayjs.extend(duration);
 
@@ -34,6 +35,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
   };
 
   const subuh = parseTime(prayerTimes.Subuh);
+  const terbit = parseTime(prayerTimes.Sunrise);
   const dzuhur = parseTime(prayerTimes.Dzuhur);
   const ashar = parseTime(prayerTimes.Ashar);
   const maghrib = parseTime(prayerTimes.Maghrib);
@@ -41,9 +43,8 @@ const useHeroMode = (prayerTimes, currentTime) => {
   const isyaStart = isya.subtract(15, 'minute');
   const tahajudStart = parseTime(prayerTimes.Firstthird);
   const tahajudEnd = parseTime(prayerTimes.Lastthird);
-  const subuhPlus5 = subuh.add(5, 'minute');
+  const subuhStart = subuh.subtract(10, 'minute');
   const now = currentTime;
-  const nowH = now.hour();
 
 
   if (now.isAfter(maghrib) && now.isBefore(isyaStart)) {
@@ -56,13 +57,15 @@ const useHeroMode = (prayerTimes, currentTime) => {
       accent: 'text-rose-200 drop-shadow-lg',
       countdownLabel: null,
       timeLeft: null,
-      progress: null,
+      progress: {
+        value: now.isBefore(maghrib) ? 0 :Math.min((now.diff(maghrib) / isya.diff(maghrib)) * 100, 100),
+        startLabel: `Maghrib ${prayerTimes.Maghrib}`,
+        endLabel: `Isya ${prayerTimes.Isya}`,
+      },
     };
   }
-
-  const isLateEvening = nowH >= 19 && now.isAfter(isyaStart);
-  const isMidnight = nowH === 0;
-  if (isLateEvening || isMidnight) {
+  
+  if (now.isAfter(isyaStart) && now.isBefore(tahajudStart)) {
     return {
       mode: 'tarawih',
       label: 'Waktu Tarawih 🕌',
@@ -70,7 +73,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       gradient: 'from-violet-600 via-purple-600 to-fuchsia-700',
       shadow: '0 25px 60px -15px rgba(147,51,234,0.5)',
       accent: 'text-purple-200 drop-shadow-lg',
-      countdownLabel: 'Waktu Tarawih',
+      countdownLabel: 'Masuk Waktu Tarawih',
       timeLeft: null,
       progress: {
         value: now.isBefore(isya) ? 0 :Math.min((now.diff(isya) / tahajudStart.diff(isya)) * 100, 100),
@@ -98,21 +101,43 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
 
-  if (now.isAfter(tahajudEnd) && now.isBefore(subuhPlus5)) {
+  if (now.isAfter(tahajudEnd) && now.isBefore(subuhStart)) {
     return {
-      mode: 'puasa-dimulai',
+      mode: 'subuh-dimulai',
       label: 'Puasa Segera Dimulai 🌅',
       sublabel: `Subuh pukul ${subuh.format('HH:mm')} — niat puasa dulu!`,
       gradient: 'from-amber-500 via-orange-500 to-red-500',
-      shadow: '0 25px 60px -15px rgba(22, 94, 249, 0.72)',
+      shadow: '0 25px 60px -15px rgba(22, 38, 76, 0.91)',
       accent: 'text-amber-100 drop-shadow-lg',
-      countdownLabel: 'Puasa dimulai dalam',
-      timeLeft: now.isBefore(subuh) ? formatDur(subuh.diff(now)) : null,
-      progress: null,
+      countdownLabel: 'Memasuki Waktu Subuh',
+      timeLeft: formatDur(subuh.diff(now)),
+      progress: {
+        value: now.isBefore(tahajudEnd) ? 0 : Math.min((now.diff(tahajudEnd) / subuh.diff(tahajudEnd)) * 100, 100),
+        startLabel: `Tahajud ${prayerTimes.Lastthird}`,
+        endLabel: `Subuh ${prayerTimes.Subuh}`,
+      },
     };
   }
 
-  if (now.isBefore(dzuhur)) {    
+  if (now.isAfter(subuhStart) && now.isBefore(terbit)) {
+    return {
+      mode: 'puasa-dimulai',
+      label: 'Puasa Dimulai',
+      sublabel: 'Selamat Menunaikan Ibadah Puasa 🌙',
+      gradient: 'from-amber-500 via-orange-500 to-red-500',
+      shadow: '0 25px 60px -15px rgba(22, 94, 249, 0.72)',
+      accent: 'text-amber-100 drop-shadow-lg',
+      countdownLabel: 'Puasa sudah dimulai',
+      timeLeft: formatDur(terbit.diff(now)),
+      progress: {
+        value: now.isBefore(subuh) ? 0 : Math.min((now.diff(subuh) / terbit.diff(subuh)) * 100, 100),
+        startLabel: `Subuh ${prayerTimes.Subuh}`,
+        endLabel: `Terbit ${prayerTimes.Sunrise}`,
+      },
+    };
+  }
+
+  if (now.isAfter(terbit) && now.isBefore(dzuhur)) {    
     return {
       mode: 'dzuhur',
       label: 'Waktu Dzuhur 🌞',
@@ -130,7 +155,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
 
-  if (now.isBefore(ashar)) {
+  if (now.isAfter(dzuhur) && now.isBefore(ashar)) {
     return {
       mode: 'ashar',
       label: 'Waktu Ashar 🌤️',
@@ -155,12 +180,12 @@ const useHeroMode = (prayerTimes, currentTime) => {
 
   return {
     mode: 'buka',
-    label: 'Menuju Berbuka',
+    label: 'Menuju Berbuka Puasa',
     sublabel: `Maghrib pukul ${maghrib.format('HH:mm')}`,
     gradient: 'from-[#1e3a8a] via-[#312e81] to-[#4c1d95]',
     shadow: '0 25px 60px -15px rgba(79,70,229,0.5)',
     accent: 'text-indigo-200 drop-shadow-lg',
-    countdownLabel: 'Menuju Berbuka',
+    countdownLabel: 'Menuju Berbuka Puasa',
     timeLeft: formatDur(diff),
     progress: {
       value: passed > 0 ? Math.min((passed / totalDur) * 100, 100) : 0,

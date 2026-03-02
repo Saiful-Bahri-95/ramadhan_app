@@ -76,6 +76,7 @@ export async function GET(request) {
           timings: {
             Imsak: addOffset(item.timings.Imsak.split(' ')[0], 3),
             Subuh: addOffset(item.timings.Fajr.split(' ')[0], 3),
+            Sunrise: addOffset(item.timings.Sunrise.split(' ')[0], 3),
             Dzuhur: addOffset(item.timings.Dhuhr.split(' ')[0], 3),
             Ashar: addOffset(item.timings.Asr.split(' ')[0], 3),
             Maghrib: addOffset(item.timings.Maghrib.split(' ')[0], 3),
