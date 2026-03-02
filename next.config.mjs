@@ -10,5 +10,5 @@ export default withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development', // supaya tidak aktif saat dev
+  disable: false, // supaya tidak aktif saat dev
 })(nextConfig);
