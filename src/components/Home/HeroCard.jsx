@@ -14,12 +14,25 @@ import { LuCalendarDays } from "react-icons/lu";
  */
 const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
   const [showLabel, setShowLabel] = useState(true);
+  const [stars, setStars] = useState([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setShowLabel((prev) => !prev);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const generatedStars = Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      size: Math.random() * 2 + 1,
+      delay: `${Math.random() * 2}s`,
+      duration: `${Math.random() * 2 + 1.5}s`,
+    }));
+    setStars(generatedStars);
   }, []);
 
   if (!hero) {
@@ -29,6 +42,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
   }
 
   let BackgroundIcon = FaCloudMoon;
+  const isNightTime = ['tahajud', 'tarawih', 'subuh-dimulai'].includes(hero.mode);
 
   switch (hero.mode) {
     case 'puasa-dimulai':
@@ -50,10 +64,53 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       className={`relative flex flex-col min-h-[300px] md:min-h-[320px] lg:min-h-[340px] rounded-[2.5rem] p-7 md:p-9 lg:p-10 text-white overflow-hidden group bg-gradient-to-br ${hero.gradient} transition-all duration-500 hover:-translate-y-1`}
       style={{ boxShadow: hero.shadow }}
     >
-      {/* Overlay & glow effects */}
-      <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.15),transparent_60%)] pointer-events-none' />
-      <div className='absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl animate-pulse pointer-events-none' />
-      <div className='absolute -bottom-24 -left-24 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl pointer-events-none' />
+      {/* Overlay & glow effects (Layer Dasar) */}
+      <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.15),transparent_60%)] pointer-events-none z-0' />
+      <div className='absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl animate-pulse pointer-events-none z-0' />
+      <div className='absolute -bottom-24 -left-24 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl pointer-events-none z-0' />
+
+      {/* Efek Bintang Berkedip (Khusus Malam Hari) - Layer 1 */}
+      {isNightTime && (
+        <div className='absolute inset-0 pointer-events-none z-[1]'>
+          {stars.map((star) => (
+            <div
+              key={star.id}
+              className='absolute bg-white rounded-full animate-pulse opacity-80'
+              style={{
+                top: star.top,
+                left: star.left,
+                width: `${star.size}px`,
+                height: `${star.size}px`,
+                animationDelay: star.delay,
+                animationDuration: star.duration,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Dekoratif Background Icon - Layer 2 (Di atas bintang) */}
+      <BackgroundIcon
+        size={214}
+        className={`
+          absolute pointer-events-none z-[2] transition-all duration-[4000ms] ease-in-out
+          ${
+            hero.mode === 'dzuhur'
+              ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-slate-900/10'
+              : hero.mode === 'ashar'
+              ? 'top-1/2 -translate-y-1/2 -right-12 scale-90 opacity-90 text-slate-900/10'
+              : hero.mode === 'tahajud' || hero.mode === 'tarawih'
+              ? 'top-1 left-1 text-white/20 scale-80'
+              : hero.mode === 'subuh-dimulai'
+              ? 'top-1/2 -translate-y-1/2 -right-14 text-white/20 scale-80'
+              : hero.mode === 'puasa-dimulai'
+              ? 'absolute top-29 -right-12 animate-spin [animation-duration:20s] scale-70 opacity-90 text-slate-900/30'
+              : '-bottom-14 -right-14 text-white/20 scale-80'
+          }
+        `}
+      />
+
+      {/* --- KONTEN UTAMA (Layer Paling Atas: z-10) --- */}
 
       {/* Top bar: kota & tombol jadwal */}
       <div className='relative z-10 flex justify-between items-center w-full'>
@@ -77,8 +134,6 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
 
       {/* Konten tengah: label & countdown */}
       <div className='relative z-10 flex-1 flex flex-col justify-center text-center mt-4 md:mt-6'>
-        
-        {/* PERUBAHAN: Menghapus margin bawah (mb-2) agar lebih rapat */}
         <p
           className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-0`}
         >
@@ -87,12 +142,10 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
 
         {hero.timeLeft ? (
           <>
-            {/* PERUBAHAN: Menambahkan negative margin (-mt-1 md:-mt-2) agar angka naik sedikit */}
             <h2 className={`text-[4rem] md:text-[4.5rem] lg:text-[5.5rem] font-black tracking-[-0.05em] tabular-nums ${hero.accent} drop-shadow-xl leading-none -mt-1 md:-mt-2`}>
               {hero.timeLeft}
             </h2>
             
-            {/* Wrapper Alternating Teks: Label & Sublabel */}
             <div className="relative h-6 md:h-8 mt-2 md:mt-3 flex justify-center items-center w-full">
               <p
                 className={`absolute w-full transition-all duration-1000 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
@@ -111,7 +164,6 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
             </div>
           </>
         ) : (
-          /* Alternating Teks Besar (Jika tidak ada countdown) */
           <div className="relative h-20 md:h-24 lg:h-28 mt-0 md:mt-1 flex justify-center items-center w-full">
             <h2
               className={`absolute w-full transition-all duration-1000 ease-in-out text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight ${
@@ -148,27 +200,6 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
           </div>
         </div>
       )}
-
-      {/* Dekoratif Background Icon */}
-      <BackgroundIcon
-        size={214}
-        className={`
-          absolute pointer-events-none transition-all duration-[4000ms] ease-in-out
-          ${
-            hero.mode === 'dzuhur'
-              ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-slate-900/10'
-              : hero.mode === 'ashar'
-              ? 'top-1/2 -translate-y-1/2 -right-12 scale-90 opacity-90 text-slate-900/10'
-              : hero.mode === 'tahajud' || hero.mode === 'tarawih'
-              ? 'top-1 left-1 text-white/20 scale-80'
-              : hero.mode === 'subuh-dimulai'
-              ? 'top-1/2 -translate-y-1/2 -right-14 text-white/20 scale-80'
-              : hero.mode === 'puasa-dimulai'
-              ? 'absolute top-29 -right-12 animate-spin [animation-duration:20s] scale-70 opacity-90 text-slate-900/30'
-              : '-bottom-14 -right-14 text-white/20 scale-80'
-          }
-        `}
-      />
     </div>
   );
 };

@@ -82,7 +82,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       gradient: 'from-gray-900 via-slate-900 to-black',
       shadow: '0 25px 60px -15px rgba(15, 23, 42, 0.8)',
       accent: 'text-slate-300 drop-shadow-lg',
-      countdownLabel: 'Waktu Tahajud',
+      countdownLabel: 'Masuk Waktu Tahajud',
       timeLeft: null,
       progress: {
         value: now.isBefore(tahajudStart) ? 0 : Math.min((now.diff(tahajudStart) / tahajudEnd.diff(tahajudStart)) * 100, 100),
