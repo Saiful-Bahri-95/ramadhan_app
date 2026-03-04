@@ -1,8 +1,7 @@
 'use client';
 
-// import { CalendarDays, Moon, Sun, Sunrise, Sunset, CloudSun } from 'lucide-react';
-
-import { WiSunrise, WiDayCloudy } from 'react-icons/wi';
+import { useState, useEffect } from 'react';
+import { WiDayCloudy } from 'react-icons/wi';
 import { MdSunny } from 'react-icons/md';
 import { FaCloudMoon } from "react-icons/fa";
 import { TbSunset2 } from "react-icons/tb";
@@ -14,6 +13,15 @@ import { LuCalendarDays } from "react-icons/lu";
  * Menerima objek `hero` dari hook useHeroMode.
  */
 const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
+  const [showLabel, setShowLabel] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowLabel((prev) => !prev);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (!hero) {
     return (
       <div className='min-h-[300px] rounded-[2.5rem] bg-slate-200 dark:bg-slate-800 animate-pulse' />
@@ -24,8 +32,6 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
 
   switch (hero.mode) {
     case 'puasa-dimulai':
-      BackgroundIcon = WiSunrise;
-      break;
     case 'dzuhur':
       BackgroundIcon = MdSunny;
       break;
@@ -41,17 +47,17 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
 
   return (
     <div
-      className={`relative min-h-[300px] md:min-h-[320px] lg:min-h-[340px] rounded-[2.5rem] p-7 md:p-9 lg:p-10 text-white overflow-hidden group bg-gradient-to-br ${hero.gradient} transition-all duration-500 hover:-translate-y-1`}
+      className={`relative flex flex-col min-h-[300px] md:min-h-[320px] lg:min-h-[340px] rounded-[2.5rem] p-7 md:p-9 lg:p-10 text-white overflow-hidden group bg-gradient-to-br ${hero.gradient} transition-all duration-500 hover:-translate-y-1`}
       style={{ boxShadow: hero.shadow }}
     >
       {/* Overlay & glow effects */}
-      <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.15),transparent_60%)]' />
-      <div className='absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl animate-pulse' />
-      <div className='absolute -bottom-24 -left-24 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl' />
+      <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.15),transparent_60%)] pointer-events-none' />
+      <div className='absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl animate-pulse pointer-events-none' />
+      <div className='absolute -bottom-24 -left-24 w-72 h-72 lg:w-96 lg:h-96 bg-white/10 rounded-full blur-3xl pointer-events-none' />
 
       {/* Top bar: kota & tombol jadwal */}
-      <div className='relative z-10 flex justify-between items-center'>
-        <div className='flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10'>
+      <div className='relative z-10 flex justify-between items-center w-full'>
+        <div className='flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10'>
           <span
             className={`text-[10px] md:text-xs lg:text-xs uppercase tracking-widest font-bold ${hero.accent}`}
           >
@@ -60,7 +66,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
         </div>
         <button
           onClick={onOpenSchedule}
-          className='p-2 hover:bg-white/20 rounded-full border border-white/20 transition-colors backdrop-blur-md'
+          className='p-2.5 hover:bg-white/20 rounded-full border border-white/20 transition-colors backdrop-blur-md'
         >
           <LuCalendarDays
             size={18}
@@ -70,33 +76,64 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       </div>
 
       {/* Konten tengah: label & countdown */}
-      <div className='relative z-10 text-center mt-8 md:mt-10 lg:mt-12'>
+      <div className='relative z-10 flex-1 flex flex-col justify-center text-center mt-4 md:mt-6'>
+        
+        {/* PERUBAHAN: Menghapus margin bawah (mb-2) agar lebih rapat */}
         <p
-          className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-2`}
+          className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-0`}
         >
           {hero.countdownLabel || hero.label}
         </p>
 
         {hero.timeLeft ? (
-          <h2 className={`text-[4rem] md:text-[4.5rem] lg:text-[5.5rem] font-black tracking-[-0.05em] tabular-nums ${hero.accent} drop-shadow-xl leading-none`}>
-            {hero.timeLeft}
-          </h2>
+          <>
+            {/* PERUBAHAN: Menambahkan negative margin (-mt-1 md:-mt-2) agar angka naik sedikit */}
+            <h2 className={`text-[4rem] md:text-[4.5rem] lg:text-[5.5rem] font-black tracking-[-0.05em] tabular-nums ${hero.accent} drop-shadow-xl leading-none -mt-1 md:-mt-2`}>
+              {hero.timeLeft}
+            </h2>
+            
+            {/* Wrapper Alternating Teks: Label & Sublabel */}
+            <div className="relative h-6 md:h-8 mt-2 md:mt-3 flex justify-center items-center w-full">
+              <p
+                className={`absolute w-full transition-all duration-1000 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
+                  showLabel ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+                }`}
+              >
+                {hero.label}
+              </p>
+              <p
+                className={`absolute w-full transition-all duration-1000 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
+                  !showLabel ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+                }`}
+              >
+                {hero.sublabel}
+              </p>
+            </div>
+          </>
         ) : (
-          <h2 className='text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black  bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight mt-4'>
-            {hero.label}
-          </h2>
+          /* Alternating Teks Besar (Jika tidak ada countdown) */
+          <div className="relative h-20 md:h-24 lg:h-28 mt-0 md:mt-1 flex justify-center items-center w-full">
+            <h2
+              className={`absolute w-full transition-all duration-1000 ease-in-out text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight ${
+                showLabel ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+              }`}
+            >
+              {hero.label}
+            </h2>
+            <h2
+              className={`absolute w-full px-4 transition-all duration-1000 ease-in-out text-[1.25rem] md:text-[1.75rem] lg:text-[2rem] font-bold text-white drop-shadow-lg leading-tight ${
+                !showLabel ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
+              }`}
+            >
+              {hero.sublabel}
+            </h2>
+          </div>
         )}
-
-        <p
-          className={`mt-3 md:mt-4 lg:mt-4 text-sm md:text-base lg:text-base ${hero.accent} opacity-80`}
-        >
-          {hero.sublabel}
-        </p>
       </div>
 
-      {/* Progress bar subuh → maghrib */}
+      {/* Progress bar */}
       {hero.progress && (
-        <div className='relative z-10 mt-10 md:mt-12 lg:mt-14 max-w-2xl mx-auto'>
+        <div className='relative z-10 w-full max-w-2xl mx-auto mt-auto pt-6'>
           <div
             className={`flex justify-between text-[9px] md:text-[10px] lg:text-[10px] uppercase tracking-widest ${hero.accent} opacity-100 mb-2`}
           >
@@ -112,23 +149,22 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
         </div>
       )}
 
-      {/* Dekoratif moon icon */}
+      {/* Dekoratif Background Icon */}
       <BackgroundIcon
         size={214}
         className={`
-          absolute pointer-events-none
-          transition-all duration-[4000ms] ease-in-out
+          absolute pointer-events-none transition-all duration-[4000ms] ease-in-out
           ${
             hero.mode === 'dzuhur'
               ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-slate-900/10'
               : hero.mode === 'ashar'
-              ? 'top-1/2 -translate-y-1/2 -right-14 scale-110 opacity-90 text-slate-900/10'
+              ? 'top-1/2 -translate-y-1/2 -right-12 scale-90 opacity-90 text-slate-900/10'
               : hero.mode === 'tahajud' || hero.mode === 'tarawih'
               ? 'top-1 left-1 text-white/20 scale-80'
               : hero.mode === 'subuh-dimulai'
               ? 'top-1/2 -translate-y-1/2 -right-14 text-white/20 scale-80'
               : hero.mode === 'puasa-dimulai'
-              ? 'bottom-1 left-1 text-white/20 scale-80'
+              ? 'absolute top-29 -right-12 animate-spin [animation-duration:20s] scale-70 opacity-90 text-slate-900/30'
               : '-bottom-14 -right-14 text-white/20 scale-80'
           }
         `}
