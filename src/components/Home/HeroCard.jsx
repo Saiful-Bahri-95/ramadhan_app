@@ -96,7 +96,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
           absolute pointer-events-none z-[2] transition-all duration-[4000ms] ease-in-out
           ${
             hero.mode === 'dzuhur'
-              ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-slate-900/10'
+              ? 'top-1 left-1 animate-spin [animation-duration:20s] scale-80 opacity-90 text-amber-400'
               : hero.mode === 'ashar'
               ? 'top-1/2 -translate-y-1/2 -right-12 scale-90 opacity-90 text-slate-900/10'
               : hero.mode === 'tahajud' || hero.mode === 'tarawih'
@@ -135,7 +135,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
       {/* Konten tengah: label & countdown */}
       <div className='relative z-10 flex-1 flex flex-col justify-center text-center mt-4 md:mt-6'>
         <p
-          className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-0`}
+          className={`text-[10px] md:text-xs lg:text-xs uppercase font-bold tracking-[0.3em] ${hero.accent} mb-2`}
         >
           {hero.countdownLabel || hero.label}
         </p>
@@ -146,17 +146,18 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
               {hero.timeLeft}
             </h2>
             
-            <div className="relative h-6 md:h-8 mt-2 md:mt-3 flex justify-center items-center w-full">
-              <p
-                className={`absolute w-full transition-all duration-1000 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
-                  showLabel ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+            {/* PERBAIKAN: Menggunakan grid untuk menumpuk elemen dengan aman tanpa 'absolute' */}
+            <div className="grid mt-2 md:mt-3 items-center justify-center w-full overflow-hidden">
+               <p
+                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
+                  showLabel ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-4 invisible'
                 }`}
               >
                 {hero.label}
               </p>
               <p
-                className={`absolute w-full transition-all duration-1000 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
-                  !showLabel ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
+                  !showLabel ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-4 invisible'
                 }`}
               >
                 {hero.sublabel}
@@ -164,17 +165,18 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
             </div>
           </>
         ) : (
-          <div className="relative h-20 md:h-24 lg:h-28 mt-0 md:mt-1 flex justify-center items-center w-full">
+          /* PERBAIKAN UNTUK TEKS BESAR SAAT BERBUKA/TIDAK ADA TIMER */
+          <div className="grid mt-0 md:mt-1 items-center justify-center w-full min-h-[6rem] overflow-hidden">
             <h2
-              className={`absolute w-full transition-all duration-1000 ease-in-out text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight ${
-                showLabel ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+              className={`col-start-1 row-start-1 w-full transition-all duration-700 ease-in-out text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight ${
+                showLabel ? 'opacity-100 translate-y-0 scale-100 visible' : 'opacity-0 translate-y-8 scale-95 invisible'
               }`}
             >
               {hero.label}
             </h2>
             <h2
-              className={`absolute w-full px-4 transition-all duration-1000 ease-in-out text-[1.25rem] md:text-[1.75rem] lg:text-[2rem] font-bold text-white drop-shadow-lg leading-tight ${
-                !showLabel ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
+              className={`col-start-1 row-start-1 w-full px-4 transition-all duration-700 ease-in-out text-[1.25rem] md:text-[1.75rem] lg:text-[2rem] font-bold text-white drop-shadow-lg leading-tight ${
+                !showLabel ? 'opacity-100 translate-y-0 scale-100 visible' : 'opacity-0 -translate-y-8 scale-95 invisible'
               }`}
             >
               {hero.sublabel}

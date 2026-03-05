@@ -72,7 +72,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       gradient: 'from-orange-600 via-rose-700 to-indigo-900',
       shadow: '0 25px 60px -15px rgba(225, 29, 72, 0.5)',
       accent: 'text-rose-200 drop-shadow-lg',
-      countdownLabel: null,
+      countdownLabel: 'Masuk Waktu Maghrib',
       timeLeft: null,
       progress: {
         value: Math.min((now.diff(maghrib) / isya.diff(maghrib)) * 100, 100),
@@ -162,7 +162,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
   if (now.isAfter(terbit) && now.isBefore(dzuhur)) {    
     return {
       mode: 'dzuhur',
-      label: 'Waktu Dzuhur 🌞',
+      label: 'Selamat Menununaikan Ibadah Puasa 🌞',
       sublabel: `Dzuhur pukul ${prayerTimes.Dzuhur}`,
       gradient: 'from-sky-400 via-blue-500 to-cyan-500',
       shadow: '0 25px 60px -15px rgba(14, 165, 233, 0.5)',
@@ -181,7 +181,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
   if (now.isAfter(dzuhur) && now.isBefore(ashar)) {
     return {
       mode: 'ashar',
-      label: 'Waktu Ashar 🌤️',
+      label: 'Selamat Menununaikan Ibadah Puasa 🌤️',
       sublabel: `Ashar pukul ${prayerTimes.Ashar}`,
       gradient: 'from-blue-500 via-sky-400 to-amber-300',
       shadow: '0 25px 60px -15px rgba(251, 191, 36, 0.5)',
