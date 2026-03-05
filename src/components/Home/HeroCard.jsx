@@ -146,18 +146,22 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
               {hero.timeLeft}
             </h2>
             
-            {/* PERBAIKAN: Menggunakan grid untuk menumpuk elemen dengan aman tanpa 'absolute' */}
-            <div className="grid mt-2 md:mt-3 items-center justify-center w-full overflow-hidden">
+            {/* PERBAIKAN: Menggunakan Grid, Scale GPU Acceleration, dan menghapus invisible */}
+            <div className="grid mt-2 md:mt-3 items-center justify-center w-full">
                <p
-                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
-                  showLabel ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-4 invisible'
+                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} ${
+                  showLabel 
+                    ? 'opacity-100 translate-y-0 scale-100' 
+                    : 'opacity-0 translate-y-2 scale-95 pointer-events-none'
                 }`}
               >
                 {hero.label}
               </p>
               <p
-                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} opacity-90 ${
-                  !showLabel ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-4 invisible'
+                className={`col-start-1 row-start-1 transition-all duration-700 ease-in-out text-sm md:text-base lg:text-base font-medium ${hero.accent} ${
+                  !showLabel 
+                    ? 'opacity-100 translate-y-0 scale-100' 
+                    : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
                 }`}
               >
                 {hero.sublabel}
@@ -166,17 +170,21 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
           </>
         ) : (
           /* PERBAIKAN UNTUK TEKS BESAR SAAT BERBUKA/TIDAK ADA TIMER */
-          <div className="grid mt-0 md:mt-1 items-center justify-center w-full min-h-[6rem] overflow-hidden">
+          <div className="grid mt-0 md:mt-1 items-center justify-center w-full min-h-[6rem]">
             <h2
               className={`col-start-1 row-start-1 w-full transition-all duration-700 ease-in-out text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-black bg-gradient-to-b from-white via-white/90 to-white/60 bg-clip-text text-transparent drop-shadow-xl leading-tight ${
-                showLabel ? 'opacity-100 translate-y-0 scale-100 visible' : 'opacity-0 translate-y-8 scale-95 invisible'
+                showLabel 
+                  ? 'opacity-100 translate-y-0 scale-100' 
+                  : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
               }`}
             >
               {hero.label}
             </h2>
             <h2
               className={`col-start-1 row-start-1 w-full px-4 transition-all duration-700 ease-in-out text-[1.25rem] md:text-[1.75rem] lg:text-[2rem] font-bold text-white drop-shadow-lg leading-tight ${
-                !showLabel ? 'opacity-100 translate-y-0 scale-100 visible' : 'opacity-0 -translate-y-8 scale-95 invisible'
+                !showLabel 
+                  ? 'opacity-100 translate-y-0 scale-100' 
+                  : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
               }`}
             >
               {hero.sublabel}
