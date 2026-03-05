@@ -121,7 +121,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
   }
 
   // 4. SAHUR / MENUJU SUBUH
-  if (now.isAfter(tahajudEnd) && now.isBefore(subuhStart)) {
+    if (now.isAfter(tahajudEnd) && now.isBefore(subuh)) {
     return {
       mode: 'subuh-dimulai',
       label: 'Puasa Segera Dimulai 🌅',
