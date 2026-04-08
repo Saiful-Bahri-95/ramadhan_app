@@ -62,18 +62,174 @@ const useHeroMode = (prayerTimes, currentTime) => {
   const isyaStart = isya.subtract(15, 'minute');
   const subuhStart = subuh.subtract(10, 'minute');
 
+// aktifkan lagi jika ramadhan datang
 
-  // 1. MAGHRIB - ISYA: Langit senja menuju malam
-  if (now.isAfter(maghrib) && now.isBefore(isyaStart)) {
+//   // 1. MAGHRIB - ISYA: Langit senja menuju malam
+//   if (now.isAfter(maghrib) && now.isBefore(isyaStart)) {
+//     return {
+//       mode: 'berbuka',
+//       label: 'Waktunya Berbuka! 🎉',
+//       sublabel: 'Alhamdulillah, puasamu hari ini selesai',
+//       gradient: 'from-orange-600 via-rose-700 to-indigo-900',
+//       shadow: '0 25px 60px -15px rgba(225, 29, 72, 0.5)',
+//       accent: 'text-rose-200 drop-shadow-lg',
+//       countdownLabel: 'Masuk Waktu Maghrib',
+//       timeLeft: null,
+//       progress: {
+//         value: Math.min((now.diff(maghrib) / isya.diff(maghrib)) * 100, 100),
+//         startLabel: `Maghrib ${prayerTimes.Maghrib}`,
+//         endLabel: `Isya ${prayerTimes.Isya}`,
+//       },
+//     };
+//   }
+  
+//   // 2. ISYA - TAHAJUD: Tarawih / Malam awal
+//   if (now.isAfter(isyaStart) && now.isBefore(tahajudStart)) {
+//     return {
+//       mode: 'tarawih',
+//       label: 'Waktu Tarawih 🕌',
+//       sublabel: 'Semangat sholat tarawih malam ini 🤍',
+//       gradient: 'from-indigo-950 via-purple-900 to-slate-900',
+//       shadow: '0 25px 60px -15px rgba(88, 28, 135, 0.5)',
+//       accent: 'text-purple-200 drop-shadow-lg',
+//       countdownLabel: 'Masuk Waktu Tarawih',
+//       timeLeft: null,
+//       progress: {
+//         value: now.isBefore(isya) ? 0 : Math.min((now.diff(isya) / tahajudStart.diff(isya)) * 100, 100),
+//         startLabel: `Isya ${prayerTimes.Isya}`,
+//         endLabel: `Tahajud ${prayerTimes.Firstthird}`,
+//       },
+//     };
+//   }
+
+//   // 3. TAHAJUD: Pertengahan Malam
+//   if (now.isAfter(tahajudStart) && now.isBefore(tahajudEnd)) {
+//     return {
+//       mode: 'tahajud',
+//       label: 'Waktu Tahajud 🌙',
+//       sublabel: 'Sepertiga malam, waktu terbaik bermunajat',
+//       gradient: 'from-gray-900 via-slate-900 to-black',
+//       shadow: '0 25px 60px -15px rgba(15, 23, 42, 0.8)',
+//       accent: 'text-slate-300 drop-shadow-lg',
+//       countdownLabel: 'Masuk Waktu Tahajud',
+//       timeLeft: null,
+//       progress: {
+//         value: Math.min((now.diff(tahajudStart) / tahajudEnd.diff(tahajudStart)) * 100, 100),
+//         startLabel: `Tahajud ${prayerTimes.Firstthird}`,
+//         endLabel: `Tahajud ${prayerTimes.Lastthird}`,
+//       },
+//     };
+//   }
+
+//   // 4. SAHUR / MENUJU SUBUH
+//   if (now.isAfter(tahajudEnd) && now.isBefore(subuhStart)) {
+//     return {
+//       mode: 'subuh-dimulai',
+//       label: 'Puasa Segera Dimulai 🌅',
+//       sublabel: `Subuh pukul ${prayerTimes.Subuh} — niat puasa dulu!`,
+//       gradient: 'from-blue-950 via-indigo-900 to-slate-800',
+//       shadow: '0 25px 60px -15px rgba(30, 58, 138, 0.6)',
+//       accent: 'text-blue-200 drop-shadow-lg',
+//       countdownLabel: 'Memasuki Waktu Subuh',
+//       timeLeft: formatDur(subuh.diff(now)),
+//       progress: {
+//         value: Math.min((now.diff(tahajudEnd) / subuh.diff(tahajudEnd)) * 100, 100),
+//         startLabel: `Tahajud ${prayerTimes.Lastthird}`,
+//         endLabel: `Subuh ${prayerTimes.Subuh}`,
+//       },
+//     };
+//   }
+
+//   // 5. SUBUH - TERBIT
+//   if (now.isAfter(subuh) && now.isBefore(terbit)) {
+//     return {
+//       mode: 'puasa-dimulai',
+//       label: 'Puasa Dimulai',
+//       sublabel: 'Selamat Menunaikan Ibadah Puasa 🌙',
+//       gradient: 'from-indigo-700 via-purple-500 to-orange-400',
+//       shadow: '0 25px 60px -15px rgba(168, 85, 247, 0.6)',
+//       accent: 'text-orange-100 drop-shadow-lg',
+//       countdownLabel: 'Puasa sudah dimulai',
+//       timeLeft: formatDur(terbit.diff(now)),
+//       progress: {
+//         value: Math.min((now.diff(subuh) / terbit.diff(subuh)) * 100, 100),
+//         startLabel: `Subuh ${prayerTimes.Subuh}`,
+//         endLabel: `Terbit ${prayerTimes.Sunrise}`,
+//       },
+//     };
+//   }
+
+//   // 6. PAGI - DZUHUR
+//   if (now.isAfter(terbit) && now.isBefore(dzuhur)) {    
+//     return {
+//       mode: 'dzuhur',
+//       label: 'Selamat Menununaikan Ibadah Puasa 🌞',
+//       sublabel: `Dzuhur pukul ${prayerTimes.Dzuhur}`,
+//       gradient: 'from-sky-400 via-blue-500 to-cyan-500',
+//       shadow: '0 25px 60px -15px rgba(14, 165, 233, 0.5)',
+//       accent: 'text-cyan-50 drop-shadow-lg',
+//       countdownLabel: 'Menuju Waktu Dzuhur',
+//       timeLeft: formatDur(dzuhur.diff(now)),
+//       progress: {
+//         value: Math.min((now.diff(terbit) / dzuhur.diff(terbit)) * 100, 100),
+//         startLabel: `Terbit ${prayerTimes.Sunrise}`,
+//         endLabel: `Dzuhur ${prayerTimes.Dzuhur}`,
+//       },
+//     };
+//   }
+
+//   // 7. DZUHUR - ASHAR
+//   if (now.isAfter(dzuhur) && now.isBefore(ashar)) {
+//     return {
+//       mode: 'ashar',
+//       label: 'Selamat Menununaikan Ibadah Puasa 🌤️',
+//       sublabel: `Ashar pukul ${prayerTimes.Ashar}`,
+//       gradient: 'from-blue-500 via-sky-400 to-amber-300',
+//       shadow: '0 25px 60px -15px rgba(251, 191, 36, 0.5)',
+//       accent: 'text-amber-50 drop-shadow-lg',
+//       countdownLabel: 'Menuju Waktu Ashar',
+//       timeLeft: formatDur(ashar.diff(now)),
+//       progress: {
+//         value: Math.min((now.diff(dzuhur) / ashar.diff(dzuhur)) * 100, 100),
+//         startLabel: `Dzuhur ${prayerTimes.Dzuhur}`,
+//         endLabel: `Ashar ${prayerTimes.Ashar}`,
+//       },
+//     };
+//   }
+
+//   // 8. DEFAULT (ASHAR - MAGHRIB): Countdown Berbuka
+//   const diff = maghrib.diff(now);
+//   const totalDur = maghrib.diff(ashar);
+//   const passed = now.diff(ashar);
+
+//   return {
+//     mode: 'buka',
+//     label: 'Menuju Berbuka Puasa',
+//     sublabel: `Maghrib pukul ${prayerTimes.Maghrib}`,
+//     gradient: 'from-amber-500 via-orange-500 to-rose-600',
+//     shadow: '0 25px 60px -15px rgba(249, 115, 22, 0.6)',
+//     accent: 'text-amber-100 drop-shadow-lg',
+//     countdownLabel: 'Menuju Berbuka Puasa',
+//     timeLeft: formatDur(diff),
+//     progress: {
+//       value: passed > 0 ? Math.min((passed / totalDur) * 100, 100) : 0,
+//       startLabel: `Ashar ${prayerTimes.Ashar}`,
+//       endLabel: `Maghrib ${prayerTimes.Maghrib}`,
+//     },
+//   };
+// };
+
+// 1. MAGHRIB - ISYA
+  if (now.isAfter(maghrib) && now.isBefore(isya)) {
     return {
-      mode: 'berbuka',
-      label: 'Waktunya Berbuka! 🎉',
-      sublabel: 'Alhamdulillah, puasamu hari ini selesai',
+      mode: 'maghrib',
+      label: 'Waktu Maghrib 🌇',
+      sublabel: 'Alhamdulillah, mari tunaikan sholat Maghrib',
       gradient: 'from-orange-600 via-rose-700 to-indigo-900',
       shadow: '0 25px 60px -15px rgba(225, 29, 72, 0.5)',
       accent: 'text-rose-200 drop-shadow-lg',
-      countdownLabel: 'Masuk Waktu Maghrib',
-      timeLeft: null,
+      countdownLabel: 'Menuju Waktu Isya',
+      timeLeft: formatDur(isya.diff(now)),
       progress: {
         value: Math.min((now.diff(maghrib) / isya.diff(maghrib)) * 100, 100),
         startLabel: `Maghrib ${prayerTimes.Maghrib}`,
@@ -82,73 +238,54 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
   
-  // 2. ISYA - TAHAJUD: Tarawih / Malam awal
-  if (now.isAfter(isyaStart) && now.isBefore(tahajudStart)) {
+  // 2. ISYA - TAHAJUD (Malam Awal)
+  if (now.isAfter(isya) && now.isBefore(tahajudStart)) {
     return {
-      mode: 'tarawih',
-      label: 'Waktu Tarawih 🕌',
-      sublabel: 'Semangat sholat tarawih malam ini 🤍',
+      mode: 'isya',
+      label: 'Waktu Isya 🌃',
+      sublabel: 'Tutup hari dengan sholat Isya sebelum beristirahat',
       gradient: 'from-indigo-950 via-purple-900 to-slate-900',
       shadow: '0 25px 60px -15px rgba(88, 28, 135, 0.5)',
       accent: 'text-purple-200 drop-shadow-lg',
-      countdownLabel: 'Masuk Waktu Tarawih',
-      timeLeft: null,
+      countdownLabel: 'Menuju Sepertiga Malam',
+      timeLeft: formatDur(tahajudStart.diff(now)),
       progress: {
-        value: now.isBefore(isya) ? 0 : Math.min((now.diff(isya) / tahajudStart.diff(isya)) * 100, 100),
+        value: Math.min((now.diff(isya) / tahajudStart.diff(isya)) * 100, 100),
         startLabel: `Isya ${prayerTimes.Isya}`,
         endLabel: `Tahajud ${prayerTimes.Firstthird}`,
       },
     };
   }
 
-  // 3. TAHAJUD: Pertengahan Malam
-  if (now.isAfter(tahajudStart) && now.isBefore(tahajudEnd)) {
+  // 3. TAHAJUD - SUBUH
+  if (now.isAfter(tahajudStart) && now.isBefore(subuh)) {
     return {
       mode: 'tahajud',
-      label: 'Waktu Tahajud 🌙',
-      sublabel: 'Sepertiga malam, waktu terbaik bermunajat',
+      label: 'Sepertiga Malam 🌙',
+      sublabel: 'Waktu terbaik bermunajat dan sholat Tahajud',
       gradient: 'from-gray-900 via-slate-900 to-black',
       shadow: '0 25px 60px -15px rgba(15, 23, 42, 0.8)',
       accent: 'text-slate-300 drop-shadow-lg',
-      countdownLabel: 'Masuk Waktu Tahajud',
-      timeLeft: null,
-      progress: {
-        value: Math.min((now.diff(tahajudStart) / tahajudEnd.diff(tahajudStart)) * 100, 100),
-        startLabel: `Tahajud ${prayerTimes.Firstthird}`,
-        endLabel: `Tahajud ${prayerTimes.Lastthird}`,
-      },
-    };
-  }
-
-  // 4. SAHUR / MENUJU SUBUH
-  if (now.isAfter(tahajudEnd) && now.isBefore(subuhStart)) {
-    return {
-      mode: 'subuh-dimulai',
-      label: 'Puasa Segera Dimulai 🌅',
-      sublabel: `Subuh pukul ${prayerTimes.Subuh} — niat puasa dulu!`,
-      gradient: 'from-blue-950 via-indigo-900 to-slate-800',
-      shadow: '0 25px 60px -15px rgba(30, 58, 138, 0.6)',
-      accent: 'text-blue-200 drop-shadow-lg',
-      countdownLabel: 'Memasuki Waktu Subuh',
+      countdownLabel: 'Menuju Waktu Subuh',
       timeLeft: formatDur(subuh.diff(now)),
       progress: {
-        value: Math.min((now.diff(tahajudEnd) / subuh.diff(tahajudEnd)) * 100, 100),
-        startLabel: `Tahajud ${prayerTimes.Lastthird}`,
+        value: Math.min((now.diff(tahajudStart) / subuh.diff(tahajudStart)) * 100, 100),
+        startLabel: `Tahajud ${prayerTimes.Firstthird}`,
         endLabel: `Subuh ${prayerTimes.Subuh}`,
       },
     };
   }
 
-  // 5. SUBUH - TERBIT
+  // 4. SUBUH - TERBIT
   if (now.isAfter(subuh) && now.isBefore(terbit)) {
     return {
-      mode: 'puasa-dimulai',
-      label: 'Puasa Dimulai',
-      sublabel: 'Selamat Menunaikan Ibadah Puasa 🌙',
-      gradient: 'from-indigo-700 via-purple-500 to-orange-400',
-      shadow: '0 25px 60px -15px rgba(168, 85, 247, 0.6)',
-      accent: 'text-orange-100 drop-shadow-lg',
-      countdownLabel: 'Puasa sudah dimulai',
+      mode: 'subuh',
+      label: 'Waktu Subuh 🌅',
+      sublabel: 'Awali harimu dengan keberkahan sholat Subuh',
+      gradient: 'from-blue-950 via-indigo-900 to-slate-800',
+      shadow: '0 25px 60px -15px rgba(30, 58, 138, 0.6)',
+      accent: 'text-blue-200 drop-shadow-lg',
+      countdownLabel: 'Menuju Terbit Matahari',
       timeLeft: formatDur(terbit.diff(now)),
       progress: {
         value: Math.min((now.diff(subuh) / terbit.diff(subuh)) * 100, 100),
@@ -158,12 +295,12 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
 
-  // 6. PAGI - DZUHUR
+  // 5. PAGI (TERBIT) - DZUHUR
   if (now.isAfter(terbit) && now.isBefore(dzuhur)) {    
     return {
-      mode: 'dzuhur',
-      label: 'Selamat Menununaikan Ibadah Puasa 🌞',
-      sublabel: `Dzuhur pukul ${prayerTimes.Dzuhur}`,
+      mode: 'dhuha',
+      label: 'Pagi yang Berkah 🌤️',
+      sublabel: 'Selamat beraktivitas! Sempatkan sholat Dhuha, yuk!',
       gradient: 'from-sky-400 via-blue-500 to-cyan-500',
       shadow: '0 25px 60px -15px rgba(14, 165, 233, 0.5)',
       accent: 'text-cyan-50 drop-shadow-lg',
@@ -177,12 +314,12 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
 
-  // 7. DZUHUR - ASHAR
+  // 6. DZUHUR - ASHAR
   if (now.isAfter(dzuhur) && now.isBefore(ashar)) {
     return {
-      mode: 'ashar',
-      label: 'Selamat Menununaikan Ibadah Puasa 🌤️',
-      sublabel: `Ashar pukul ${prayerTimes.Ashar}`,
+      mode: 'dzuhur',
+      label: 'Waktu Dzuhur ☀️',
+      sublabel: 'Jeda sejenak dari kesibukan, mari sholat Dzuhur',
       gradient: 'from-blue-500 via-sky-400 to-amber-300',
       shadow: '0 25px 60px -15px rgba(251, 191, 36, 0.5)',
       accent: 'text-amber-50 drop-shadow-lg',
@@ -196,19 +333,19 @@ const useHeroMode = (prayerTimes, currentTime) => {
     };
   }
 
-  // 8. DEFAULT (ASHAR - MAGHRIB): Countdown Berbuka
+  // 7. DEFAULT (ASHAR - MAGHRIB)
   const diff = maghrib.diff(now);
   const totalDur = maghrib.diff(ashar);
   const passed = now.diff(ashar);
 
   return {
-    mode: 'buka',
-    label: 'Menuju Berbuka Puasa',
-    sublabel: `Maghrib pukul ${prayerTimes.Maghrib}`,
+    mode: 'ashar',
+    label: 'Waktu Ashar ⛅',
+    sublabel: 'Sore hari tiba, waktunya menunaikan sholat Ashar',
     gradient: 'from-amber-500 via-orange-500 to-rose-600',
     shadow: '0 25px 60px -15px rgba(249, 115, 22, 0.6)',
     accent: 'text-amber-100 drop-shadow-lg',
-    countdownLabel: 'Menuju Berbuka Puasa',
+    countdownLabel: 'Menuju Waktu Maghrib',
     timeLeft: formatDur(diff),
     progress: {
       value: passed > 0 ? Math.min((passed / totalDur) * 100, 100) : 0,
@@ -216,6 +353,7 @@ const useHeroMode = (prayerTimes, currentTime) => {
       endLabel: `Maghrib ${prayerTimes.Maghrib}`,
     },
   };
+
 };
 
 export default useHeroMode;
