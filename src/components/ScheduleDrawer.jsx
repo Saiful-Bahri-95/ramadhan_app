@@ -26,15 +26,15 @@ dayjs.locale('id');
 
 const SCHEDULE_CARDS = [
   {
-    id: 'Imsak',
-    label: 'Imsak',
+    id: 'Subuh',
+    label: 'Subuh',
     icon: Moon,
     color: 'text-indigo-500 dark:text-indigo-400',
     bg: 'bg-indigo-50 dark:bg-indigo-900/40',
   },
   {
-    id: 'Subuh',
-    label: 'Subuh',
+    id: 'Sunrise',
+    label: 'Terbit',
     icon: Sunrise,
     color: 'text-sky-500 dark:text-sky-400',
     bg: 'bg-sky-50 dark:bg-sky-900/40',
@@ -202,7 +202,7 @@ export default function ScheduleDrawer({ isOpen, onClose, onUpdate }) {
               <div className='flex justify-between items-center mb-2'>
                 <div>
                   <h2 className='text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight'>
-                    Jadwal Imsakiyah
+                    Jadwal Sholat & Imsakiyah
                   </h2>
                   <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>
                     Sesuai dengan zona waktu lokasimu
@@ -419,23 +419,23 @@ export default function ScheduleDrawer({ isOpen, onClose, onUpdate }) {
                         <div className='flex items-center gap-4 text-xs font-bold'>
                           <div className='text-center w-10'>
                             <p className='text-[9px] text-indigo-400 uppercase tracking-wider mb-0.5'>
-                              Imsak
-                            </p>
-                            <p className='text-slate-700 dark:text-slate-200'>
-                              {day.timings.Imsak}
-                            </p>
-                          </div>
-                          <div className='text-center w-10'>
-                            <p className='text-[9px] text-sky-400 uppercase tracking-wider mb-0.5'>
                               Subuh
                             </p>
                             <p className='text-slate-700 dark:text-slate-200'>
                               {day.timings.Subuh}
                             </p>
                           </div>
+                          <div className='text-center w-10'>
+                            <p className='text-[9px] text-sky-400 uppercase tracking-wider mb-0.5'>
+                              Terbit
+                            </p>
+                            <p className='text-slate-700 dark:text-slate-200'>
+                              {day.timings.Sunrise}
+                            </p>
+                          </div>
                           <div className='text-center w-12'>
                             <p className='text-[9px] text-rose-400 uppercase tracking-wider mb-0.5'>
-                              Berbuka
+                              Maghrib
                             </p>
                             <p className='text-slate-700 dark:text-slate-200'>
                               {day.timings.Maghrib}

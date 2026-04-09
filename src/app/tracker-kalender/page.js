@@ -2,18 +2,15 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import 'dayjs/locale/id';
+import moment from 'moment-hijri';
+import 'moment-timezone';
+import 'moment/locale/id'; // Gunakan locale bahasa indonesia
 import { ArrowLeft, Target, Plus, X, Trash2, Check } from 'lucide-react';
 import localforage from 'localforage';
 import { motion, AnimatePresence } from 'framer-motion';
+import useHijriDate from '../../hooks/useHijriDate';
 
-dayjs.locale('id');
-
-const CURRENT_YEAR = dayjs().year();
-const RAMADHAN_START = dayjs(`${CURRENT_YEAR}-02-19`);
-const RAMADHAN_END = dayjs(`${CURRENT_YEAR}-03-21`);
-const RAMADHAN_DAYS = 30;
+moment.locale('id');
 
 const TRACKER_KEYS = [
   'is_puasa',
@@ -39,27 +36,30 @@ const TRACKER_LABELS = {
   sedekah: 'Sedekah',
 };
 
-const RAMADHAN_DATES = Array.from({ length: RAMADHAN_DAYS }, (_, i) =>
-  RAMADHAN_START.add(i, 'day'),
-);
+// Fungsi untuk mengubah angka standar menjadi Angka Arab Timur (١, ٢, ٣, dst)
+const toArabicNumeral = (num) => {
+  const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return String(num).replace(/[0-9]/g, (w) => arabicNumbers[w]);
+};
 
+// MENGUBAH WARNA MENJADI LEBIH HIDUP (VIBRANT) & SOLID
 const getProgressColor = (percent) => {
   if (percent === 0)
     return 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500';
   if (percent < 40)
-    return 'bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400';
+    return 'bg-rose-500 text-white shadow-md shadow-rose-500/30 border border-rose-600/50';
   if (percent < 70)
-    return 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400';
+    return 'bg-orange-500 text-white shadow-md shadow-orange-500/30 border border-orange-600/50';
   if (percent < 100)
-    return 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400';
-  return 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400';
+    return 'bg-blue-500 text-white shadow-md shadow-blue-500/30 border border-blue-600/50';
+  return 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 border border-emerald-600/50';
 };
 
 const getBarColor = (percent) => {
   if (percent === 0) return 'bg-slate-200 dark:bg-slate-700';
-  if (percent < 40) return 'bg-rose-400';
-  if (percent < 70) return 'bg-amber-400';
-  if (percent < 100) return 'bg-blue-400';
+  if (percent < 40) return 'bg-rose-500';
+  if (percent < 70) return 'bg-orange-500';
+  if (percent < 100) return 'bg-blue-500';
   return 'bg-emerald-500';
 };
 
@@ -67,18 +67,42 @@ export default function TrackerKalender() {
   const router = useRouter();
   const [allData, setAllData] = useState({});
   const [loading, setLoading] = useState(true);
+  
   const [selectedDate, setSelectedDate] = useState(
-    dayjs().format('YYYY-MM-DD'),
+    moment().tz('Asia/Jakarta').format('YYYY-MM-DD')
   );
-  const [toggling, setToggling] = useState(null);
+  
+  // State untuk grid kalender dinamis (Bulan Berjalan)
+  const [monthDates, setMonthDates] = useState([]);
+  const [firstDayOfWeek, setFirstDayOfWeek] = useState(0);
 
+  const [toggling, setToggling] = useState(null);
   const [customHabits, setCustomHabits] = useState([]);
   const [showAddHabit, setShowAddHabit] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
 
+  const { hijriDate } = useHijriDate();
+
   const fetchAllData = useCallback(async () => {
     setLoading(true);
     try {
+      // 1. Hitung tanggal berdasarkan Bulan Hijriah saat ini
+      const today = moment().tz('Asia/Jakarta');
+      const currentIYear = today.iYear();
+      const currentIMonth = today.iMonth();
+      const daysInMonth = moment.iDaysInMonth(currentIYear, currentIMonth);
+
+      // Cari hari pertama di bulan Hijriah ini jatuh pada hari apa
+      const startOfMonth = moment(`${currentIYear}-${currentIMonth + 1}-1`, 'iYYYY-iM-iD').tz('Asia/Jakarta');
+      setFirstDayOfWeek(startOfMonth.day());
+
+      // Buat array tanggal untuk 1 bulan Hijriah penuh (29 atau 30 hari)
+      const dates = Array.from({ length: daysInMonth }, (_, i) =>
+        startOfMonth.clone().add(i, 'days')
+      );
+      setMonthDates(dates);
+
+      // 2. Ambil data tracker dari localforage
       const trackerData = (await localforage.getItem('ramadhan_tracker')) || {};
       const habitsData = (await localforage.getItem('custom_habits')) || [];
 
@@ -161,10 +185,12 @@ export default function TrackerKalender() {
     };
   };
 
-  const today = dayjs().format('YYYY-MM-DD');
-  const totalDaysPassed = RAMADHAN_DATES.filter(
-    (d) => !d.isAfter(dayjs(), 'day'),
+  const todayStr = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
+  
+  const totalDaysPassed = monthDates.filter(
+    (d) => !d.isAfter(moment().tz('Asia/Jakarta'), 'day'),
   ).length;
+
   const totalCompleted = Object.values(allData).reduce((acc, row) => {
     const dComp = TRACKER_KEYS.reduce((a, k) => a + (row[k] ? 1 : 0), 0);
     const cComp = customHabits.reduce(
@@ -173,16 +199,16 @@ export default function TrackerKalender() {
     );
     return acc + dComp + cComp;
   }, 0);
-  const perfectDays = RAMADHAN_DATES.filter((date) => {
-    if (date.isAfter(dayjs(), 'day')) return false;
+
+  const perfectDays = monthDates.filter((date) => {
+    if (date.isAfter(moment().tz('Asia/Jakarta'), 'day')) return false;
     const p = getProgress(date.format('YYYY-MM-DD'));
     return p.total > 0 && p.percent === 100;
   }).length;
 
-  const firstDayOfWeek = RAMADHAN_START.day();
   const gridCells = [
     ...Array.from({ length: firstDayOfWeek }, () => null),
-    ...RAMADHAN_DATES,
+    ...monthDates,
   ];
 
   return (
@@ -207,10 +233,10 @@ export default function TrackerKalender() {
           </button>
           <div>
             <h1 className='text-xl md:text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight'>
-              Kalender Ramadhan
+              Kalender Ibadah
             </h1>
             <p className='text-xs md:text-sm text-slate-400 dark:text-slate-500'>
-              19 Februari – 21 Maret {CURRENT_YEAR} · 30 Hari
+              Lacak ibadah harianmu di bulan ini
             </p>
           </div>
         </header>
@@ -237,21 +263,20 @@ export default function TrackerKalender() {
           />
         </div>
 
-        {/* BUNGKUS DENGAN FLEX/GRID UNTUK DESKTOP */}
         <div className='flex flex-col lg:flex-row gap-6'>
           {/* KOLOM KIRI: KALENDER */}
           <div className='flex-1 flex flex-col'>
             <div className='bg-white dark:bg-slate-900 rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-100 dark:border-slate-800 flex-1'>
               <div className='mb-4 md:mb-6'>
-                <h2 className='font-bold text-slate-800 dark:text-slate-100 text-base md:text-lg'>
-                  30 Hari Ramadhan 1447 H
+                <h2 className='font-bold text-slate-800 dark:text-slate-100 text-base md:text-lg uppercase tracking-wide'>
+                  {hijriDate}
                 </h2>
                 <p className='text-xs md:text-sm text-slate-400 dark:text-slate-500 mt-0.5'>
                   Ketuk tanggal untuk lihat detail ibadah
                 </p>
               </div>
 
-              <div className='grid grid-cols-7 mb-2'>
+              <div className='grid grid-cols-7 mb-3'>
                 {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((d) => (
                   <div
                     key={d}
@@ -263,23 +288,24 @@ export default function TrackerKalender() {
               </div>
 
               {loading ? (
-                <div className='grid grid-cols-7 gap-1.5 md:gap-2.5 lg:gap-3'>
+                <div className='grid grid-cols-7 gap-2 md:gap-3 lg:gap-4'>
                   {[...Array(35)].map((_, i) => (
                     <div
                       key={i}
-                      className='h-11 md:h-14 lg:h-16 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse'
+                      className='h-14 md:h-16 lg:h-[4.5rem] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse'
                     />
                   ))}
                 </div>
               ) : (
-                <div className='grid grid-cols-7 gap-1.5 md:gap-2.5 lg:gap-3'>
+                <div className='grid grid-cols-7 gap-2 md:gap-3 lg:gap-4'>
                   {gridCells.map((date, idx) => {
                     if (!date) return <div key={`empty-${idx}`} />;
                     const dateKey = date.format('YYYY-MM-DD');
-                    const isFuture = date.isAfter(dayjs(), 'day');
-                    const isToday = dateKey === today;
+                    const isFuture = date.isAfter(moment().tz('Asia/Jakarta'), 'day');
+                    const isToday = dateKey === todayStr;
                     const isSelected = selectedDate === dateKey;
-                    const ramadhanDay = date.diff(RAMADHAN_START, 'day') + 1;
+                    
+                    const hijriDay = date.iDate();
                     const progress = getProgress(dateKey);
 
                     return (
@@ -291,21 +317,25 @@ export default function TrackerKalender() {
                           setSelectedDate(isSelected ? null : dateKey)
                         }
                         className={`
-                          relative flex flex-col items-center justify-center h-11 md:h-14 lg:h-16 rounded-xl md:rounded-2xl transition-all font-bold
-                          ${isFuture ? 'opacity-25 cursor-default' : 'cursor-pointer hover:scale-105 active:scale-95'}
-                          ${isSelected ? 'ring-2 ring-[#1e3a8a] dark:ring-blue-500 ring-offset-1 dark:ring-offset-slate-900 shadow-md' : ''}
-                          ${isToday ? 'ring-2 ring-emerald-400 ring-offset-1 dark:ring-offset-slate-900' : ''}
-                          ${!isFuture ? getProgressColor(progress.percent) : 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600'}
+                          relative flex flex-col items-center justify-center h-14 md:h-16 lg:h-[4.5rem] rounded-2xl transition-all font-bold overflow-hidden
+                          ${isFuture ? 'opacity-30 cursor-default' : 'cursor-pointer hover:scale-[1.03] active:scale-95'}
+                          ${isSelected ? 'ring-4 ring-offset-2 ring-[#1e3a8a] dark:ring-blue-400 dark:ring-offset-slate-900 z-10' : ''}
+                          ${isToday && !isSelected ? 'ring-2 ring-emerald-400 ring-offset-1 dark:ring-offset-slate-900' : ''}
+                          ${!isFuture ? getProgressColor(progress.percent) : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-transparent'}
                         `}
                       >
-                        <span className='text-[8px] md:text-[10px] leading-none opacity-60 font-semibold mb-0.5'>
-                          {ramadhanDay}
+                        {/* ANGKA ARAB (DIperbesar & Dipertebal) */}
+                        <span className='text-2xl md:text-3xl leading-none font-black drop-shadow-sm'>
+                          {toArabicNumeral(hijriDay)}
                         </span>
-                        <span className='leading-none text-xs md:text-sm'>
+                        
+                        {/* TANGGAL GREGORIAN */}
+                        <span className={`mt-1 leading-none text-[10px] md:text-[11px] font-semibold ${!isFuture && progress.percent > 0 ? 'opacity-90 text-white/90' : 'opacity-60'}`}>
                           {date.date()}
                         </span>
+                        
                         {!isFuture && progress.completed > 0 && (
-                          <span className='text-[7px] md:text-[9px] leading-none mt-1 opacity-70'>
+                          <span className='absolute top-1 right-1 md:top-1.5 md:right-1.5 text-[8px] md:text-[9px] font-bold leading-none bg-black/15 text-white px-1.5 py-0.5 rounded-full'>
                             {progress.completed}/{progress.total}
                           </span>
                         )}
@@ -319,16 +349,16 @@ export default function TrackerKalender() {
               <div className='flex items-center gap-3 md:gap-4 mt-6 md:mt-8 justify-center flex-wrap bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl'>
                 {[
                   { color: 'bg-slate-200 dark:bg-slate-700', label: 'Kosong' },
-                  { color: 'bg-rose-400', label: '<40%' },
-                  { color: 'bg-amber-400', label: '40–69%' },
-                  { color: 'bg-blue-400', label: '70–99%' },
+                  { color: 'bg-rose-500', label: '<40%' },
+                  { color: 'bg-orange-500', label: '40–69%' },
+                  { color: 'bg-blue-500', label: '70–99%' },
                   { color: 'bg-emerald-500', label: '100%' },
                 ].map(({ color, label }) => (
                   <div key={label} className='flex items-center gap-1.5'>
                     <div
-                      className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${color}`}
+                      className={`w-3 h-3 md:w-4 md:h-4 rounded-full shadow-sm ${color}`}
                     />
-                    <span className='text-[9px] md:text-[10px] font-bold text-slate-500 dark:text-slate-400'>
+                    <span className='text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400'>
                       {label}
                     </span>
                   </div>
@@ -353,13 +383,24 @@ export default function TrackerKalender() {
                       <div className='flex items-start justify-between mb-4'>
                         <div>
                           <p className='text-[10px] md:text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 font-bold mb-0.5'>
-                            Hari ke-
-                            {dayjs(selectedDate).diff(RAMADHAN_START, 'day') +
-                              1}{' '}
-                            Ramadhan
+                            Hari ke-{moment(selectedDate, 'YYYY-MM-DD').iDate()}{' '}
+                            {[
+                              'Muharram',
+                              'Safar',
+                              'Rabiul Awal',
+                              'Rabiul Akhir',
+                              'Jumadal Ula',
+                              'Jumadal Akhirah',
+                              'Rajab',
+                              'Syaban',
+                              'Ramadan',
+                              'Syawal',
+                              'Dzulqaidah',
+                              'Dzulhijjah'
+                            ][moment(selectedDate, 'YYYY-MM-DD').iMonth()]}
                           </p>
                           <h3 className='font-bold text-lg md:text-xl text-slate-800 dark:text-slate-100 capitalize'>
-                            {dayjs(selectedDate).format('dddd, DD MMMM YYYY')}
+                            {moment(selectedDate, 'YYYY-MM-DD').format('dddd, DD MMMM YYYY')}
                           </h3>
                           <p className='text-xs md:text-sm text-slate-400 dark:text-slate-500 mt-1'>
                             {progress.completed} dari {progress.total} target
@@ -367,7 +408,7 @@ export default function TrackerKalender() {
                           </p>
                         </div>
                         <span
-                          className={`text-3xl md:text-4xl font-black ${progress.percent === 100 ? 'text-emerald-500' : progress.percent >= 70 ? 'text-blue-500' : progress.percent >= 40 ? 'text-amber-500' : progress.percent > 0 ? 'text-rose-400' : 'text-slate-300 dark:text-slate-600'}`}
+                          className={`text-3xl md:text-4xl font-black ${progress.percent === 100 ? 'text-emerald-500' : progress.percent >= 70 ? 'text-blue-500' : progress.percent >= 40 ? 'text-orange-500' : progress.percent > 0 ? 'text-rose-500' : 'text-slate-300 dark:text-slate-600'}`}
                         >
                           {progress.percent}%
                         </span>
@@ -536,7 +577,6 @@ export default function TrackerKalender() {
                   );
                 })()
               ) : (
-                // State Kosong di Desktop Kanan saat tidak ada tanggal yang dipilih
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

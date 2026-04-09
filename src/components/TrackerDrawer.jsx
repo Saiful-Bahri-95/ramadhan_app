@@ -27,7 +27,7 @@ const RAMADHAN_START = dayjs(`${CURRENT_YEAR}-02-19`);
 const items = [
   {
     key: 'is_puasa',
-    label: 'Puasa Ramadhan',
+    label: 'Puasa Ramadhan / Sunnah',
     icon: Flame,
     color: 'text-orange-500 dark:text-orange-400',
     bg: 'bg-orange-100 dark:bg-orange-900/40',
@@ -69,7 +69,7 @@ const items = [
   },
   {
     key: 'tarawih',
-    label: 'Sholat Tarawih',
+    label: 'Sholat Tahajud / Tarawih',
     icon: Star,
     color: 'text-indigo-500 dark:text-indigo-400',
     bg: 'bg-indigo-100 dark:bg-indigo-900/40',
@@ -208,7 +208,7 @@ export default function TrackerDrawer({ isOpen, onClose, onUpdate }) {
                     const ramadhanDay = today.diff(RAMADHAN_START, 'day') + 1;
                     if (ramadhanDay > 0 && ramadhanDay <= 30)
                       return `${ramadhanDay} Ramadhan, ${today.format('DD-MM-YYYY')}`;
-                    return today.format('dddd, DD MM YYYY');
+                    return today.format('dddd, DD MMMM YYYY');
                   })()}
                 </p>
               </div>

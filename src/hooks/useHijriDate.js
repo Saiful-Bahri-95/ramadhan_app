@@ -50,8 +50,7 @@ export default function useHijriDate() {
   const getHijriDate = () => {
     try {
       const yesterday = moment()
-        .tz('Asia/Jakarta')
-        .subtract(1, 'day');
+        .tz('Asia/Jakarta');
 
       const day = yesterday.iDate();
       const monthNumber = yesterday.iMonth(); // 0–11
