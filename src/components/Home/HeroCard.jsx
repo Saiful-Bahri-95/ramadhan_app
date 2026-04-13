@@ -45,7 +45,7 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
   const isNightTime = ['tahajud', 'tarawih', 'subuh-dimulai'].includes(hero.mode);
 
   switch (hero.mode) {
-    case 'puasa-dimulai':
+    case 'dhuha':
     case 'dzuhur':
       BackgroundIcon = MdSunny;
       break;
@@ -103,8 +103,8 @@ const HeroCard = ({ hero, userCity, onOpenSchedule }) => {
               ? 'top-1 left-1 text-white/20 scale-80'
               : hero.mode === 'subuh-dimulai'
               ? 'top-1/2 -translate-y-1/2 -right-14 text-white/20 scale-80'
-              : hero.mode === 'puasa-dimulai'
-              ? 'absolute top-29 -right-12 animate-spin [animation-duration:20s] scale-70 opacity-90 text-slate-900/30'
+              : hero.mode === 'dhuha'
+              ? 'absolute top-25 -left-12 animate-spin [animation-duration:20s] scale-70 opacity-90 text-amber-200'
               : '-bottom-14 -right-14 text-white/20 scale-80'
           }
         `}

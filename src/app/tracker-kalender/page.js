@@ -25,13 +25,13 @@ const TRACKER_KEYS = [
 ];
 
 const TRACKER_LABELS = {
-  is_puasa: 'Puasa',
+  is_puasa: 'Puasa Ramadhan / Sunnah',
   subuh: 'Subuh',
   dzuhur: 'Dzuhur',
   ashar: 'Ashar',
   maghrib: 'Maghrib',
   isya: 'Isya',
-  tarawih: 'Tarawih',
+  tarawih: 'Tarawih / Tahajud',
   quran: "Qur'an",
   sedekah: 'Sedekah',
 };
