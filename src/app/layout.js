@@ -55,4 +55,10 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-        <Stora
+        <StoragePersist />
+        <SideNav />
+        {children}
+      </body>
+    </html>
+  );
+}

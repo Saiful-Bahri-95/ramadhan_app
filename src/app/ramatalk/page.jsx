@@ -292,4 +292,16 @@ function RamatalkContent() {
 
 export default function RamatalkPage() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute>
+      <Suspense
+        fallback={
+          <div className='min-h-screen bg-[#F6F9FC] dark:bg-slate-950 flex items-center justify-center text-slate-500'>
+            Memuat asisten...
+          </div>
+        }
+      >
+        <RamatalkContent />
+      </Suspense>
+    </ProtectedRoute>
+  );
+}

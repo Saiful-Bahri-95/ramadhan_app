@@ -158,4 +158,6 @@ export default function HaidTrackerPage() {
         isOpen={showNiatModal}
         onClose={() => setShowNiatModal(false)}
       />
-    <
+    </ProtectedRoute>
+  );
+}

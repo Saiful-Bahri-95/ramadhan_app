@@ -460,4 +460,28 @@ export const studyMaterials = [
       'Ada ikatan yang lebih kuat daripada darah dan kepentingan, yaitu ukhuwah — persaudaraan yang dibangun karena Allah. Rasulullah ﷺ menegaskan bahwa iman seseorang belum sempurna hingga ia mencintai saudaranya sebagaimana ia mencintai dirinya sendiri.',
       'Cinta seperti ini melahirkan sikap yang indah: kita ingin kebaikan untuk orang lain seperti kita menginginkannya untuk diri sendiri. Tidak ada iri saat saudara kita bahagia, tidak ada senang saat ia tertimpa kesulitan.',
       'Persaudaraan karena Allah tidak mudah retak oleh urusan dunia, karena pondasinya bukan keuntungan, melainkan keimanan. Ia mendamaikan, menutupi aib, dan saling mendoakan dalam diam.',
-      'Periksa hatimu hari ini: apakah kamu tulus menginginkan kebaikan bagi orang-orang di sekitarmu? Memperbaiki kualitas cinta kita kepada sesama adalah bagian dari memperba
+      'Periksa hatimu hari ini: apakah kamu tulus menginginkan kebaikan bagi orang-orang di sekitarmu? Memperbaiki kualitas cinta kita kepada sesama adalah bagian dari memperbaiki iman.',
+    ],
+    quran: {
+      text: 'Tidak sempurna iman salah seorang dari kalian hingga ia mencintai saudaranya sebagaimana ia mencintai dirinya sendiri.',
+      source: 'HR. Bukhari & Muslim',
+    },
+  },
+  {
+    day: 30,
+    title: 'Istiqamah: Konsisten dalam Kebaikan',
+    category: 'Tazkiyah',
+    readTime: '1-2 min',
+    content: [
+      'Memulai kebaikan itu mudah; yang berat adalah menjaganya. Di sinilah letak keutamaan istiqamah — keteguhan untuk tetap berada di jalan yang benar, meski semangat naik turun dan godaan datang silih berganti.',
+      'Allah memberi kabar gembira bagi orang yang berkata "Tuhan kami adalah Allah", lalu meneguhkan pendiriannya: para malaikat turun menenangkan mereka, jangan takut dan jangan bersedih. Istiqamah mendatangkan ketenangan dan penjagaan dari Allah.',
+      'Istiqamah tidak menuntut kesempurnaan. Kita mungkin terjatuh, lalai, atau melemah. Yang penting adalah bangkit kembali dan melanjutkan, bukan berhenti karena merasa gagal. Rasulullah ﷺ mengajarkan bahwa amal yang paling dicintai Allah adalah yang konsisten meski sedikit.',
+      'Daripada melakukan banyak kebaikan sesekali lalu berhenti, lebih baik melakukan kebaikan kecil secara terus-menerus. Tetesan air yang konsisten mampu melubangi batu.',
+      'Jadikan hari ini bukan puncak, melainkan langkah dari perjalanan panjang. Pilih satu kebaikan yang bisa kamu jaga setiap hari, dan mintalah kepada Allah keteguhan untuk istiqamah.',
+    ],
+    quran: {
+      text: 'Sesungguhnya orang-orang yang berkata, "Tuhan kami adalah Allah" kemudian mereka meneguhkan pendirian mereka, maka malaikat-malaikat akan turun kepada mereka (dengan berkata), "Janganlah kamu merasa takut dan janganlah kamu bersedih hati."',
+      source: 'QS. Fussilat: 30',
+    },
+  },
+];

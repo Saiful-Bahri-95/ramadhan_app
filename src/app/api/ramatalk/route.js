@@ -213,4 +213,40 @@ export async function POST(request) {
       - Kamu BUKAN dokter, psikolog, atau mufti — jika ada masalah serius, arahkan ke profesional dengan lembut.
       - Selalu ingat: kamu berbicara dengan Muslim Indonesia yang sedang menjalani ibadah dan aktivitas sehari-hari. Jaga kehangatan di setiap respons.`;
 
-    // ─── Call Groq 
+    // ─── Call Groq API ──────────────────────────────────────────────────────────
+    const response = await callGroq({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...trimmedHistory,
+        { role: 'user', content: message },
+      ],
+      temperature: mode === 'ngobrol' ? 0.75 : 0.1,
+      max_tokens: 700,
+      //top_p: 0.9,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Groq API Error:', errorData);
+      throw new Error(`Groq error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply =
+      data.choices?.[0]?.message?.content ||
+      'Maaf, aku lagi bingung jawabnya. Coba tanyain lagi ya 🙏';
+
+    return NextResponse.json({ reply }, { status: 200 });
+  } catch (error) {
+    console.error('API Handler Error:', error);
+
+    return NextResponse.json(
+      {
+        reply:
+          'Yah, serverku lagi sibuk atau koneksimu terputus. Coba lagi sebentar ya 🤍',
+      },
+      { status: 500 },
+    );
+  }
+}

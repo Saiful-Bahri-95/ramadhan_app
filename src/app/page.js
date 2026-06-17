@@ -159,4 +159,25 @@ export default function MyRamadhanHome() {
       </div>
 
       {/* SECTION: DRAWERS */}
-      <Tracke
+      <TrackerDrawer
+        isOpen={isTrackerOpen}
+        onClose={() => setIsTrackerOpen(false)}
+        onUpdate={fetchTrackerSummary}
+      />
+      <ScheduleDrawer
+        isOpen={isScheduleOpen}
+        onClose={() => setIsScheduleOpen(false)}
+        onUpdate={fetchPrayerTimes}
+      />
+      <NotificationDrawer
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        notifications={notifications}
+      />
+      <NearbyMosqueDrawer
+        isOpen={isMosqueOpen}
+        onClose={() => setIsMosqueOpen(false)}
+      />
+    </main>
+  );
+}
