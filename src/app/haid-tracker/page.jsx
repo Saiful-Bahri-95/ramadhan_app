@@ -55,9 +55,9 @@ export default function HaidTrackerPage() {
   const [inputDate, setInputDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
 
-  // Redirect ke login jika belum autentikasi
+  // Profil dibuat otomatis oleh useUser; jika tetap kosong, kembalikan ke beranda
   useEffect(() => {
-    if (!userLoading && !user) router.push('/auth/login');
+    if (!userLoading && !user) router.push('/');
   }, [user, userLoading]);
 
   // ── Handlers ──
@@ -158,6 +158,4 @@ export default function HaidTrackerPage() {
         isOpen={showNiatModal}
         onClose={() => setShowNiatModal(false)}
       />
-    </ProtectedRoute>
-  );
-}
+    <

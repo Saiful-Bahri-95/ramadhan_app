@@ -72,7 +72,12 @@ export async function POST(request) {
 
         3. JANGAN tampilkan versi alternatif secara otomatis — satu versi terpopuler saja.
 
-        4. Di akhir respons, tambahkan satu baris: "Ada versi lain dari doa ini jika kamu ingin tahu 😊"
+        4. Di akhir respons, tutup dengan SATU kalimat hangat yang memancing rasa ingin tahu agar user bertanya lagi. JANGAN selalu memakai kalimat yang sama — variasikan dan sesuaikan dengan doa yang baru dibahas. Pilih salah satu sudut berikut:
+          - Tawarkan doa lain yang berkaitan ("Mau aku kasih doa pendampingnya juga? 😊")
+          - Tawarkan adab/waktu terbaiknya ("Penasaran kapan waktu paling mustajab membacanya?")
+          - Tawarkan kisah/keutamaannya ("Ada kisah menarik di balik doa ini, mau aku ceritakan?")
+          - Tawarkan versi lain ("Doa ini punya versi lain juga, lho. Mau lihat?")
+          - Ajak ke kebutuhan user ("Lagi menghadapi situasi tertentu? Cerita aja, biar aku carikan doa yang pas 🤍")
 
         5. HANYA jika user secara eksplisit meminta ("versi lain?", "ada alternatif?", "versi arabnya berbeda?"), BARULAH jelaskan perbedaan versi secara lengkap dan adil.
 
@@ -197,6 +202,10 @@ export async function POST(request) {
 
       ${modeInstructions}
 
+      MEMAHAMI KONTEKS PERCAKAPAN (PENTING):
+      - Perhatikan riwayat percakapan sebelum pesan terakhir. Jika kamu baru saja menawarkan sesuatu ("Mau aku kasih doa pendamping?", "Mau lihat versi lain?", dll) dan user membalas singkat seperti "boleh", "iya", "mau", "ok", "lanjut", "gas", "tentu", atau sejenisnya — itu berarti SETUJU. Langsung penuhi tawaran tadi, JANGAN minta user mengetik ulang permintaannya.
+      - Jangan pernah menjawab "kamu belum meminta apa pun" jika konteks sebelumnya sudah jelas. Lihat dulu pesanmu yang terakhir untuk memahami maksud user.
+
       ATURAN FORMAT BERSAMA (BERLAKU DI SEMUA MODE):
       - Gunakan Markdown: **bold** untuk penekanan, baris kosong untuk memisahkan paragraf.
       - Emoji boleh digunakan secukupnya — jangan berlebihan (max 2-3 per respons).
@@ -204,40 +213,4 @@ export async function POST(request) {
       - Kamu BUKAN dokter, psikolog, atau mufti — jika ada masalah serius, arahkan ke profesional dengan lembut.
       - Selalu ingat: kamu berbicara dengan Muslim Indonesia yang sedang menjalani ibadah dan aktivitas sehari-hari. Jaga kehangatan di setiap respons.`;
 
-    // ─── Call Groq API ──────────────────────────────────────────────────────────
-    const response = await callGroq({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...trimmedHistory,
-        { role: 'user', content: message },
-      ],
-      temperature: mode === 'ngobrol' ? 0.75 : 0.1,
-      max_tokens: 700,
-      //top_p: 0.9,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Groq API Error:', errorData);
-      throw new Error(`Groq error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const reply =
-      data.choices?.[0]?.message?.content ||
-      'Maaf, aku lagi bingung jawabnya. Coba tanyain lagi ya 🙏';
-
-    return NextResponse.json({ reply }, { status: 200 });
-  } catch (error) {
-    console.error('API Handler Error:', error);
-
-    return NextResponse.json(
-      {
-        reply:
-          'Yah, serverku lagi sibuk atau koneksimu terputus. Coba lagi sebentar ya 🤍',
-      },
-      { status: 500 },
-    );
-  }
-}
+    // ─── Call Groq 

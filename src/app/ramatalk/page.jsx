@@ -90,6 +90,14 @@ function RamatalkContent() {
     if (!input.trim()) return;
 
     const userText = input;
+
+    // Susun riwayat percakapan agar AI memahami konteks (mis. saat user
+    // menjawab "boleh"/"lanjut" untuk melanjutkan topik sebelumnya).
+    const chatHistory = messages.map((m) => ({
+      role: m.role === 'ai' ? 'assistant' : 'user',
+      content: m.text,
+    }));
+
     const userMessage = { id: Date.now(), role: 'user', text: userText };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -115,6 +123,7 @@ function RamatalkContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userText,
+          chatHistory,
           context: {
             timeString: now.format('HH:mm'),
             greeting,
@@ -283,16 +292,4 @@ function RamatalkContent() {
 
 export default function RamatalkPage() {
   return (
-    <ProtectedRoute>
-      <Suspense
-        fallback={
-          <div className='min-h-screen bg-[#F6F9FC] dark:bg-slate-950 flex items-center justify-center text-slate-500'>
-            Memuat asisten...
-          </div>
-        }
-      >
-        <RamatalkContent />
-      </Suspense>
-    </ProtectedRoute>
-  );
-}
+    <ProtectedRoute>

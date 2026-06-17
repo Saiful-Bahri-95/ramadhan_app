@@ -18,8 +18,10 @@ import useTrackerSummary from '@/hooks/useTrackerSummary';
 
 import HomeHeader from '@/components/Home/HomeHeader';
 import HeroCard from '@/components/Home/HeroCard';
+import PrayerScheduleCards from '@/components/Home/PrayerScheduleCards';
 import DailyGoalTracker from '@/components/Home/DailyGoalTracker';
 import ToolGrid from '@/components/Home/ToolGrid';
+import NearbyMosqueCard from '@/components/Home/NearbyMosqueCard';
 import DailyKnowledge from '@/components/Home/DailyKnowledge';
 import JurnalCard from '@/components/Home/JurnalCard';
 import RamaTalkCard from '@/components/Home/RamaTalkCard';
@@ -28,6 +30,7 @@ import QuoteCard from '@/components/Home/QuoteCard';
 import TrackerDrawer from '@/components/TrackerDrawer';
 import ScheduleDrawer from '@/components/ScheduleDrawer';
 import NotificationDrawer from '@/components/NotificationDrawer';
+import NearbyMosqueDrawer from '@/components/NearbyMosqueDrawer';
 
 dayjs.locale('id');
 dayjs.extend(relativeTime);
@@ -46,6 +49,7 @@ export default function MyRamadhanHome() {
   const [isTrackerOpen, setIsTrackerOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isMosqueOpen, setIsMosqueOpen] = useState(false);
 
   const [quoteOfTheDay, setQuoteOfTheDay] = useState(quotesData[0]);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -128,11 +132,16 @@ export default function MyRamadhanHome() {
               userCity={userCity}
               onOpenSchedule={() => setIsScheduleOpen(true)}
             />
+            <PrayerScheduleCards
+              prayerTimes={prayerTimes}
+              currentTime={currentTime}
+            />
             <DailyGoalTracker
               taskProgress={taskProgress}
               onClick={() => setIsTrackerOpen(true)}
             />
             <ToolGrid />
+            <NearbyMosqueCard onClick={() => setIsMosqueOpen(true)} />
           </div>
 
           {/* SECTION: RIGHT COLUMN (CARDS) */}
@@ -150,21 +159,4 @@ export default function MyRamadhanHome() {
       </div>
 
       {/* SECTION: DRAWERS */}
-      <TrackerDrawer
-        isOpen={isTrackerOpen}
-        onClose={() => setIsTrackerOpen(false)}
-        onUpdate={fetchTrackerSummary}
-      />
-      <ScheduleDrawer
-        isOpen={isScheduleOpen}
-        onClose={() => setIsScheduleOpen(false)}
-        onUpdate={fetchPrayerTimes}
-      />
-      <NotificationDrawer
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-        notifications={notifications}
-      />
-    </main>
-  );
-}
+      <Tracke

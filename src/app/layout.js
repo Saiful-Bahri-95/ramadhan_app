@@ -1,6 +1,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import SideNav from '@/components/SideNav';
+import StoragePersist from '@/components/StoragePersist';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -54,9 +55,4 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-        <SideNav />
-        {children}
-      </body>
-    </html>
-  );
-}
+        <Stora
