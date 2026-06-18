@@ -20,7 +20,9 @@ function fmtDistance(m) {
 }
 
 export default function NearbyMosqueDrawer({ isOpen, onClose }) {
-  const { status, mosques, errorMsg, findNearby } = useNearbyMosques();
+  const { status, mosques, coords, errorMsg, findNearby } = useNearbyMosques();
+
+  const poorAccuracy = coords?.accuracy && coords.accuracy > 500;
 
   // Mulai cari otomatis saat drawer dibuka pertama kali (jika belum ada hasil)
   useEffect(() => {
@@ -131,9 +133,9 @@ export default function NearbyMosqueDrawer({ isOpen, onClose }) {
               {/* Success list */}
               {status === 'success' && (
                 <>
-                  <div className='flex items-center justify-between mb-4'>
+                  <div className='flex items-center justify-between mb-3'>
                     <p className='text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider'>
-                      {mosques.length} masjid ditemukan
+                      {mosques.length} masjid terdekat
                     </p>
                     <button
                       onClick={findNearby}
@@ -143,6 +145,28 @@ export default function NearbyMosqueDrawer({ isOpen, onClose }) {
                       Perbarui
                     </button>
                   </div>
+
+                  {/* Info akurasi lokasi */}
+                  {coords?.accuracy != null && (
+                    <div
+                      className={`mb-4 text-[11px] rounded-xl px-3 py-2 border ${
+                        poorAccuracy
+                          ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400'
+                          : 'bg-slate-50 dark:bg-slate-800/60 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      {poorAccuracy ? (
+                        <>
+                          Akurasi lokasi rendah (±{Math.round(coords.accuracy)} m),
+                          jadi jarak bisa kurang tepat. Untuk hasil lebih akurat:
+                          aktifkan GPS presisi tinggi, dekati jendela/ruang
+                          terbuka, lalu tekan <strong>Perbarui</strong>.
+                        </>
+                      ) : (
+                        <>Akurasi lokasi ±{Math.round(coords.accuracy)} m.</>
+                      )}
+                    </div>
+                  )}
 
                   <div className='space-y-2.5'>
                     {mosques.map((m, i) => (

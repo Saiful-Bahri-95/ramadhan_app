@@ -27,7 +27,7 @@ const OVERPASS_ENDPOINTS = [
 
 // Batas waktu tiap permintaan ke server (ms). Mencegah loading menggantung.
 const REQUEST_TIMEOUT = 12000;
-const GEO_TIMEOUT = 10000;
+const GEO_TIMEOUT = 15000;
 
 // Hitung jarak dua titik (meter) dengan rumus Haversine.
 function haversine(lat1, lon1, lat2, lon2) {
@@ -41,8 +41,9 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Ambil posisi GPS sebagai Promise. enableHighAccuracy=false jauh lebih cepat
-// & lebih andal di dalam ruangan; akurasi kasar sudah cukup untuk cari masjid.
+// Ambil posisi GPS sebagai Promise. enableHighAccuracy=true agar titik lokasi
+// presisi (penting supaya "masjid terdekat" benar-benar yang dekat).
+// maximumAge=0 memaksa pembacaan lokasi baru, bukan cache lama yang bisa meleset.
 function getPosition() {
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -52,7 +53,7 @@ function getPosition() {
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve(pos.coords),
       (err) => reject(err),
-      { enableHighAccuracy: false, timeout: GEO_TIMEOUT, maximumAge: 300000 },
+      { enableHighAccuracy: true, timeout: GEO_TIMEOUT, maximumAge: 0 },
     );
   });
 }
@@ -124,15 +125,15 @@ export default function useNearbyMosques() {
       return;
     }
 
-    const { latitude: lat, longitude: lon } = position;
-    setCoords({ lat, lon });
+    const { latitude: lat, longitude: lon, accuracy } = position;
+    setCoords({ lat, lon, accuracy });
     setStatus('loading');
 
-    // 2) Cari masjid. Mulai radius 5 km (cukup untuk kota); jika kosong,
-    //    perlebar SEKALI ke 12 km. Dibatasi agar tidak loading terlalu lama.
+    // 2) Cari masjid. Mulai radius 3 km agar hasil benar-benar terdekat;
+    //    perlebar bertahap ke 8 km lalu 15 km hanya jika kosong.
     try {
       let elements = [];
-      for (const radius of [5000, 12000]) {
+      for (const radius of [3000, 8000, 15000]) {
         const data = await queryOverpass(lat, lon, radius);
         elements = data?.elements || [];
         if (elements.length > 0) break;
