@@ -2,6 +2,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import SideNav from '@/components/SideNav';
 import StoragePersist from '@/components/StoragePersist';
+import GlobalInstallPrompt from '@/components/GlobalInstallPrompt';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
         <StoragePersist />
         <SideNav />
         {children}
+        <GlobalInstallPrompt />
       </body>
     </html>
   );

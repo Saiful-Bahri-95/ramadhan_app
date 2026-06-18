@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Smartphone, Download, X } from 'lucide-react';
 import useAppMode from '@/hooks/useAppMode';

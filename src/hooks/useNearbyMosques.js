@@ -18,14 +18,20 @@ import { useState, useCallback } from 'react';
  * @returns {{ status, mosques, coords, errorMsg, findNearby }}
  */
 
+// Endpoint mirror diurut dari yang biasanya paling responsif.
 const OVERPASS_ENDPOINTS = [
-  'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass-api.de/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ];
+
+// Batas waktu tiap permintaan ke server (ms). Mencegah loading menggantung.
+const REQUEST_TIMEOUT = 12000;
+const GEO_TIMEOUT = 10000;
 
 // Hitung jarak dua titik (meter) dengan rumus Haversine.
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000; // radius bumi (m)
+  const R = 6371000;
   const toRad = (d) => (d * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -35,7 +41,8 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Ambil posisi GPS sebagai Promise.
+// Ambil posisi GPS sebagai Promise. enableHighAccuracy=false jauh lebih cepat
+// & lebih andal di dalam ruangan; akurasi kasar sudah cukup untuk cari masjid.
 function getPosition() {
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -45,14 +52,26 @@ function getPosition() {
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve(pos.coords),
       (err) => reject(err),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
+      { enableHighAccuracy: false, timeout: GEO_TIMEOUT, maximumAge: 300000 },
     );
   });
 }
 
-// Query Overpass dengan fallback ke mirror jika endpoint pertama gagal.
+// fetch dengan batas waktu via AbortController.
+async function fetchWithTimeout(url, options, timeout) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Query Overpass: coba endpoint satu per satu sampai ada yang berhasil.
 async function queryOverpass(lat, lon, radius) {
-  const query = `[out:json][timeout:25];
+  // timeout server dibuat kecil (10s) agar tidak menggantung lama.
+  const query = `[out:json][timeout:10];
 (
   node["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lon});
   way["amenity"="place_of_worship"]["religion"="muslim"](around:${radius},${lat},${lon});
@@ -62,15 +81,20 @@ out center tags 40;`;
   let lastErr;
   for (const endpoint of OVERPASS_ENDPOINTS) {
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'data=' + encodeURIComponent(query),
-      });
+      const res = await fetchWithTimeout(
+        endpoint,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'data=' + encodeURIComponent(query),
+          cache: 'no-store',
+        },
+        REQUEST_TIMEOUT,
+      );
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return await res.json();
     } catch (err) {
-      lastErr = err;
+      lastErr = err; // lanjut ke endpoint berikutnya
     }
   }
   throw lastErr || new Error('overpass failed');
@@ -94,8 +118,8 @@ export default function useNearbyMosques() {
       setStatus('denied');
       setErrorMsg(
         err?.code === 1
-          ? 'Izin lokasi ditolak. Aktifkan akses lokasi di pengaturan browser, lalu coba lagi.'
-          : 'Tidak bisa mendapatkan lokasi. Pastikan GPS aktif dan coba lagi.',
+          ? 'Izin lokasi ditolak. Aktifkan akses lokasi untuk aplikasi ini di pengaturan, lalu coba lagi.'
+          : 'Tidak bisa mendapatkan lokasi. Pastikan GPS/lokasi aktif, lalu coba lagi.',
       );
       return;
     }
@@ -104,12 +128,12 @@ export default function useNearbyMosques() {
     setCoords({ lat, lon });
     setStatus('loading');
 
-    // 2) Cari masjid; perluas radius bertahap jika kosong (2km → 5km → 10km)
+    // 2) Cari masjid. Mulai radius 5 km (cukup untuk kota); jika kosong,
+    //    perlebar SEKALI ke 12 km. Dibatasi agar tidak loading terlalu lama.
     try {
-      let data;
       let elements = [];
-      for (const radius of [2000, 5000, 10000]) {
-        data = await queryOverpass(lat, lon, radius);
+      for (const radius of [5000, 12000]) {
+        const data = await queryOverpass(lat, lon, radius);
         elements = data?.elements || [];
         if (elements.length > 0) break;
       }
@@ -143,7 +167,9 @@ export default function useNearbyMosques() {
     } catch (err) {
       console.error('Gagal mencari masjid terdekat:', err);
       setStatus('error');
-      setErrorMsg('Gagal memuat data lokasi. Periksa koneksi internet dan coba lagi.');
+      setErrorMsg(
+        'Server peta sedang sibuk atau koneksi lambat. Coba lagi sebentar ya.',
+      );
     }
   }, []);
 
