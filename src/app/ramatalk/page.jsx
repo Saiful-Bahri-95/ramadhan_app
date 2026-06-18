@@ -17,6 +17,7 @@ import {
   ScrollText,
 } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { apiUrl } from '@/lib/apiBase';
 
 dayjs.locale('id');
 
@@ -118,7 +119,7 @@ function RamatalkContent() {
     const currentDay = dayDiff > 0 ? dayDiff : 0;
 
     try {
-      const res = await fetch('/api/ramatalk', {
+      const res = await fetch(apiUrl('/api/ramatalk'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

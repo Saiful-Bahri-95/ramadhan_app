@@ -27,6 +27,8 @@ import JurnalCard from '@/components/Home/JurnalCard';
 import RamaTalkCard from '@/components/Home/RamaTalkCard';
 import QuoteCard from '@/components/Home/QuoteCard';
 
+import { schedulePrayerNotifications } from '@/lib/prayerNotifications';
+
 import TrackerDrawer from '@/components/TrackerDrawer';
 import ScheduleDrawer from '@/components/ScheduleDrawer';
 import NotificationDrawer from '@/components/NotificationDrawer';
@@ -101,6 +103,14 @@ export default function MyRamadhanHome() {
       fetchTrackerSummary();
     }
   }, [user]);
+
+  // Jadwalkan ulang notifikasi pengingat sholat setiap kali jadwal diperbarui
+  // (hanya aktif di aplikasi native Android/iOS; di web tidak melakukan apa-apa).
+  useEffect(() => {
+    if (prayerTimes) {
+      schedulePrayerNotifications(prayerTimes);
+    }
+  }, [prayerTimes]);
 
   const dailyTopic =
     studyMaterials.find((m) => m.day === hijriDay) || studyMaterials[0];

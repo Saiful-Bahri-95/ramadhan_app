@@ -1,0 +1,10 @@
+{
+  "appId": "com.sahabatibadah.app",
+  "appName": "Sahabat Ibadah",
+  "webDir": "out",
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#1e3a8a"
+    }
+  }
+}

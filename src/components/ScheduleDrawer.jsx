@@ -21,6 +21,7 @@ import localforage from 'localforage';
 import useUser from '@/hooks/useUser';
 import { StorageService } from '@/lib/storageService';
 import { CITIES } from '@/data/cities';
+import { apiUrl } from '@/lib/apiBase';
 
 dayjs.locale('id');
 
@@ -102,7 +103,7 @@ export default function ScheduleDrawer({ isOpen, onClose, onUpdate }) {
   const fetchSchedule = async (city) => {
     setIsLoadingSchedule(true);
     try {
-      const res = await fetch(`/api/schedule?city=${encodeURIComponent(city)}`);
+      const res = await fetch(apiUrl(`/api/schedule?city=${encodeURIComponent(city)}`));
       const data = await res.json();
       const now = dayjs();
       

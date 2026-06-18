@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import localforage from 'localforage';
 import dayjs from 'dayjs';
+import { apiUrl } from '@/lib/apiBase';
 
 export default function usePrayerTimes() {
   const [prayerTimes, setPrayerTimes] = useState(null);
@@ -14,7 +15,7 @@ export default function usePrayerTimes() {
       const city = profile?.location || 'Jakarta';
       setUserCity(city);
 
-      const res = await fetch(`/api/schedule?city=${encodeURIComponent(city)}`);
+      const res = await fetch(apiUrl(`/api/schedule?city=${encodeURIComponent(city)}`));
       const data = await res.json();
 
       const now = dayjs();
