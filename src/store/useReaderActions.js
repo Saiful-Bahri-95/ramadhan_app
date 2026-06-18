@@ -81,7 +81,7 @@ const useReaderActions = ({
     const name = surahName ?? surahContext?.namaLatin;
     const copyKey = isJuzMode ? `${surahId}-${ayat.nomorAyat}` : ayat.nomorAyat;
 
-    const text = `${name} Ayat ${ayat.nomorAyat}\n\n${ayat.teksArab}\n\n${ayat.teksLatin}\n\n"${ayat.teksIndonesia}"\n\n(Sumber: MyRamadhan)`;
+    const text = `${name} Ayat ${ayat.nomorAyat}\n\n${ayat.teksArab}\n\n${ayat.teksLatin}\n\n"${ayat.teksIndonesia}"\n\n(Sumber: Sahabat Ibadah)`;
     navigator.clipboard.writeText(text);
     setCopiedId(copyKey);
     setTimeout(() => setCopiedId(null), 2000);

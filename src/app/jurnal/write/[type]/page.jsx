@@ -121,7 +121,7 @@ export default function WriteJournal() {
 
   return (
     <div className='min-h-screen bg-[#FAFAF7] dark:bg-slate-950 flex flex-col transition-colors duration-300'>
-      <title>{catData.title} — MyRamadhan</title>
+      <title>{catData.title} — Sahabat Ibadah</title>
 
       <div className='fixed inset-0 pointer-events-none -z-10 overflow-hidden'>
         <div

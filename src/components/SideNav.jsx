@@ -50,7 +50,7 @@ export default function SideNav() {
       {
         path: '/tracker-kalender',
         icon: CalendarDays,
-        label: 'Ramadhan Tracker',
+        label: 'Tracker Ibadah',
         activeColor: 'text-[#1e3a8a] dark:text-blue-400',
         bgHover: 'hover:bg-blue-50 dark:hover:bg-blue-900/30',
       },
@@ -87,7 +87,7 @@ export default function SideNav() {
       {
         path: '/fiqih',
         icon: Scale,
-        label: 'Fiqih Ramadhan',
+        label: 'Fiqih',
         activeColor: 'text-amber-600 dark:text-amber-400',
         bgHover: 'hover:bg-amber-50 dark:hover:bg-amber-900/30',
       },

@@ -160,7 +160,7 @@ const useHaditsReader = ({
   // ─── Salin teks ───────────────────────────────────────────────────────────
 
   const handleCopy = (hadith) => {
-    const text = `*${selectedBook.name} No. ${hadith.number}*\n\n${hadith.arab}\n\n"${hadith.id}"\n\n(Sumber: Aplikasi MyRamadhan)`;
+    const text = `*${selectedBook.name} No. ${hadith.number}*\n\n${hadith.arab}\n\n"${hadith.id}"\n\n(Sumber: Aplikasi Sahabat Ibadah)`;
     navigator.clipboard.writeText(text);
     setCopiedId(hadith.number);
     setTimeout(() => setCopiedId(null), 2000);

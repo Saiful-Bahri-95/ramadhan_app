@@ -1,7 +1,7 @@
 {
-  "name": "MyRamadhan",
-  "short_name": "Ramadhan",
-  "description": "Asisten Ibadah Harianmu",
+  "name": "Sahabat Ibadah",
+  "short_name": "Sahabat",
+  "description": "Pendamping ibadah harianmu",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F6F9FC",

@@ -27,7 +27,7 @@ const DrawerDonasi = ({ open, onClose }) => (
     {/* Pesan donasi */}
     <div className='space-y-3 mb-6'>
       <p>
-        Aplikasi <strong>MyRamadhan</strong> ini saya bangun secara mandiri di
+        Aplikasi <strong>Sahabat Ibadah</strong> ini saya bangun secara mandiri di
         waktu luang, dan saya berkomitmen menjaganya tetap{' '}
         <strong>gratis dan bebas dari iklan</strong>.
       </p>

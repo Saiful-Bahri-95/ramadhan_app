@@ -83,7 +83,7 @@ const useDoaActions = ({
       '',
       doa.arti ? `"${doa.arti}"` : '',
       '',
-      '(Sumber: Aplikasi MyRamadhan)',
+      '(Sumber: Aplikasi Sahabat Ibadah)',
     ]
       .join('\n')
       .trim();

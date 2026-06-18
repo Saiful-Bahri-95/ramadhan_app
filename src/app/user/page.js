@@ -219,7 +219,7 @@ export default function UserProfile() {
         </div>
 
         <p className='text-center text-[10px] font-medium text-slate-400 dark:text-slate-600 mt-6 md:mt-10 mb-2'>
-          MyRamadhan App v1.1.0 &copy; {new Date().getFullYear()}
+          Sahabat Ibadah App v1.1.0 &copy; {new Date().getFullYear()}
         </p>
       </main>
 

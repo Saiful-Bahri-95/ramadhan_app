@@ -19,7 +19,7 @@ const DrawerTentang = ({ open, onClose }) => (
         <Moon size={36} strokeWidth={1.5} />
       </div>
       <h3 className='font-bold text-2xl text-slate-800 dark:text-slate-100 tracking-tight'>
-        MyRamadhan
+        Sahabat Ibadah
       </h3>
       <p className='text-xs text-slate-400 dark:text-slate-500 font-bold tracking-widest uppercase mt-1'>
         Version 1.1.0 (PWA Ready)
@@ -27,7 +27,7 @@ const DrawerTentang = ({ open, onClose }) => (
     </div>
 
     <p className='mb-3 text-[13px] leading-relaxed'>
-      <strong>MyRamadhan</strong> adalah inisiatif independen yang dibangun
+      <strong>Sahabat Ibadah</strong> adalah inisiatif independen yang dibangun
       untuk menjadi "Asisten Ibadah Personal" Anda. Aplikasi ini dirancang
       seringan mungkin, bebas dari iklan yang mengganggu, dan kini sepenuhnya
       berjalan secara <em>100% Local-First</em>—memastikan data ibadah Anda aman

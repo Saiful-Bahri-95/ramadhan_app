@@ -69,7 +69,7 @@ const BantuanMenuSection = ({
             <Info size={18} />
           </div>
           <span className='font-semibold text-slate-700 dark:text-slate-200 text-sm'>
-            Tentang MyRamadhan
+            Tentang Sahabat Ibadah
           </span>
         </div>
         <ChevronRight

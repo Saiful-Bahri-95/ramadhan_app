@@ -7,9 +7,9 @@ import GlobalInstallPrompt from '@/components/GlobalInstallPrompt';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'MyRamadhan - Pendamping Ibadah',
+  title: 'Sahabat Ibadah - Pendamping Ibadah Harian',
   description:
-    "Aplikasi pendamping ibadah Ramadhan lengkap dengan Al-Qur'an, Tracker, Jurnal, dan Jadwal Sholat secara offline.",
+    "Aplikasi pendamping ibadah harian lengkap dengan Al-Qur'an, Doa, Hadits, Tracker, Jurnal, dan Jadwal Sholat secara offline.",
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
@@ -18,7 +18,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'MyRamadhan',
+    title: 'Sahabat Ibadah',
   },
   formatDetection: {
     telephone: false,
