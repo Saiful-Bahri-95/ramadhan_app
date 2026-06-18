@@ -32,24 +32,21 @@ sudah ditambahkan ke `package.json`.
 
 ---
 
-## 2. (WAJIB) Lengkapi rute dinamis untuk export statis — *Tahap 2*
+## 2. Rute dinamis untuk export statis — *Tahap 2 (SUDAH DITERAPKAN ✅)*
 
 Export statis (`output: 'export'`) mewajibkan setiap rute dinamis punya daftar
-parameter via `generateStaticParams`. Aplikasi ini punya 4 rute dinamis yang
-semuanya `'use client'`:
+parameter via `generateStaticParams`. Keempat rute dinamis berikut sudah dipecah
+menjadi **pembungkus server `page.js`** (berisi `generateStaticParams`) **+
+komponen client** (kode lama, kini di file `*Reader.jsx` / `*Detail.jsx` /
+`WriteJournal.jsx`):
 
-- `src/app/quran/juz/[number]` (juz 1–30)
-- `src/app/quran/surah/[number]` (surah 1–114)
-- `src/app/study/[day]` (hari 1–30)
-- `src/app/jurnal/write/[type]` (tipe dari `journalPrompts`)
+- `src/app/quran/juz/[number]` → `JuzReader.jsx` (juz 1–30)
+- `src/app/quran/surah/[number]` → `SurahReader.jsx` (surah 1–114)
+- `src/app/study/[day]` → `StudyDetail.jsx` (hari 1–30)
+- `src/app/jurnal/write/[type]` → `WriteJournal.jsx` (tipe dari `journalPrompts`)
 
-Karena halaman client tidak boleh mengekspor `generateStaticParams`, tiap rute
-perlu dipecah menjadi: **server `page.js`** (berisi `generateStaticParams` +
-render komponen client) **+ komponen client** (kode lama).
-
-> Bagian ini belum diterapkan. Mintalah agar langkah ini dikerjakan — sifatnya
-> mekanis tapi menyentuh 4 file dan perlu diverifikasi dengan `npm run build:mobile`.
-> **`npm run build:mobile` akan gagal sampai langkah ini selesai.**
+Tidak ada perubahan perilaku di web; pembungkus hanya merender komponen client
+yang sama. Lanjut ke langkah 3.
 
 ---
 

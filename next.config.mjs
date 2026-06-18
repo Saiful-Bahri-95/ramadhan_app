@@ -19,5 +19,7 @@ export default withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development', // supaya tidak aktif saat dev atau nanti ganti dengan false jika sudah stabil
+  // Nonaktif saat dev, dan saat build mobile (Capacitor) — service worker tidak
+  // diperlukan di dalam webview native dan bisa menimbulkan konflik.
+  disable: process.env.NODE_ENV === 'development' || isMobile,
 })(nextConfig);
